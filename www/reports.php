@@ -14,9 +14,9 @@ echo "</form>\n";
 echo '<center><a href="?status='.STATE_NEW.'">New reports</a> | <a href="?status='.STATE_FIXED.'">Fixed reports</a> | <a href="?status='.STATE_INVALID.'">Invalid reports</a></center>'."\n";
 
 if (!isset($_GET[status])) {
-        $status = STATE_NEW;
+	$status = STATE_NEW;
 } else {
-        $status = $_GET[status];
+	$status = $_GET[status];
 }
 
 display_versions();

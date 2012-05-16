@@ -1,13 +1,42 @@
-crashreportsviewer
-==================
+Android crash reports viewer
+============================
+Foreword: I am new to GitHub. Please advise if there's something wrong.
 
-ACRA PHP Frontend
+This project is an ACRA PHP Frontend. ACRA is the Application Crash Reporting tool for Android. Check <http://code.google.com/p/acra/>
 
-I am new to GitHub. Please advise if there's something wrong.
+Setup
+=====
+
+On the server
 
 This has to be installed on a Apache/PHP/*SQL machine configuration.
 MySQL server connection has to be configured in ./www/mysql.php
 Table should already be created.
 
-ACRA should sent reports to http://server/path/to/submit.php
+On the client
+
+ACRA should sent reports to `http://server.tld/path/to/submit.php`
+
+	@ReportsCrashes(formKey = "", // will not be used
+					formUri = "http://yourserver.com/path/to/submit.php",
+					formUriBasicAuthLogin = "yourlogin", // optional
+					formUriBasicAuthPassword = "y0uRpa$$w0rd", // optional
+					mode = ReportingInteractionMode.TOAST,
+					resToastText = R.string.crash_toast_text)
+	public class MyApplication extends Application {
+	...
+
+
+	
+Usage
+=====
+
+Pages:
+  * index.php : dashboard of the crashes of your applications
+  * report.php : view a single report, identified by its "issue_id"
+  * reports.php : view all reports, grouped by issue_id
+
+You can filter by package name (* wildcard supported): `http://server.tld/com.yourcompany.yourproduct/reports.php` will display all information regarding "com.yourcompany.yourproduct" package only.
+
+`issue_id`: this is an md5sum of the exceptions and where they occured. This should give a unique identifier for the crash, and all crashes caused by the same issue (same exceptions at the same files/lines) should share the same `issue_id`.
 

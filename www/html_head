@@ -6,9 +6,9 @@
     <script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
     <script type="text/javascript" language="javascript">
 function setStatusAndGo(iid, stat, url) {
-        $.get("/ajax.php", { action: "update_status", status: stat, issue_id: iid }, function() {
-                document.location=url;
-        });
+	$.get("/ajax.php", { action: "update_status", status: stat, issue_id: iid }, function() {
+		document.location=url;
+	});
 }
     </script>
     <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="excanvas.js"></script><![endif]-->
