@@ -1,19 +1,14 @@
 <?php
 
-function bicou_log($msg) {
-	$file = fopen("err_", "a+");
-	fputs($file, date("d/M/Y G:i:s\t") . $msg . "\n");
-	fclose($file);
-}
+@include "config.php";
 
-// MySQL
-$mysql = mysql_connect("localhost" /*"mysql.alwaysdata.com"*/, "root", "");
+$mysql = mysql_connect($mysql_server, $mysql_user, $mysql_password);
 if (!$mysql) {
 	bicou_log("Unable to connect to mysql server: ".mysql_error());
 	die("Server down");
 }
 
-if (!mysql_select_db("bicou_crashes")) {
+if (!mysql_select_db($mysql_db)) {
 	bicou_log("Unable to select db: ".mysql_error());
 	die("Server down");
 }

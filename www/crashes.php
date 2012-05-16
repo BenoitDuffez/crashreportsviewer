@@ -6,6 +6,12 @@ define('STATE_NEW', 0);
 define('STATE_FIXED', 1);
 define('STATE_INVALID', 2);
 
+function bicou_log($msg) {
+	$file = fopen("err_", "a+");
+	fputs($file, date("d/M/Y G:i:s\t") . $msg . "\n");
+	fclose($file);
+}
+
 function status_name($status) {
 	if (intval($status) == STATE_NEW) {
 		return "new";

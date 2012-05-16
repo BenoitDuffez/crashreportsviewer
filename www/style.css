@@ -77,6 +77,19 @@ a.button:active{
 	    box-shadow:1px 1px 10px black inset, 0 1px 0 rgba(255,255,255,0.4);
 }
 
+.error {
+	padding: 20px;
+	border: 3px dashed #CCCCCC;
+	background: rgb(255,128,128);
+	width: 250px;
+}
+
+.form {
+	margin-left: 80px;
+	border-left: 3px dashed #AAAAAA;
+	padding-left: 30px;
+}
+
 pre {
 	white-space: pre-wrap;       /* css-3 */
 	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */

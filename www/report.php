@@ -1,10 +1,8 @@
 <?php
 
+include "html.php";
 include "mysql.php";
 include "crashes.php";
-
-// HTML Headers
-echo implode('', file('html_head'));
 
 function showReport($tab) {
 	echo "<h1>Report #".$tab['id']."</h1>\n";

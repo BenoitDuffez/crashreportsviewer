@@ -1,10 +1,8 @@
 <?php
 
+include "html.php";
 include "mysql.php";
 include "crashes.php";
-
-// HTML Headers
-echo implode('', file('html_head'));
 
 // Search form
 echo '<form method="get" action="reports.php">'."\n";

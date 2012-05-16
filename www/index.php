@@ -1,10 +1,9 @@
 <?php
 
 include "crashes.php";
+include "html.php";
+include "check_install.php";
 include "mysql.php";
-
-// HTML Headers
-echo implode('', file('html_head'));
 
 display_crashes_vs_date();
 
