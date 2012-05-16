@@ -1,0 +1,13 @@
+AuthUserFile D:/www/crashes/crashes.htpasswd
+AuthGroupFile /dev/null
+AuthName "Oh hai."
+AuthType Basic
+
+<Limit GET POST>
+require valid-user
+</Limit>
+
+Options +FollowSymlinks
+RewriteEngine on
+RewriteRule ^([^/]+)/([^\.]+).php       $2.php?package=$1 [QSA]
+

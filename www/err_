@@ -1,0 +1,5 @@
+16/May/2012 8:45:28	Unable to connect to mysql server: Aucune connexion n'a pu être établie car l'ordinateur cible l'a expressément refusée.
+
+16/May/2012 8:47:52	Unable to connect to mysql server: Access denied for user 'bicou_crashes'@'localhost' (using password: YES)
+16/May/2012 9:00:03	Unable to connect to mysql server: Access denied for user 'bicou_crashes'@'localhost' (using password: YES)
+16/May/2012 9:01:38	Unable to query: SELECT id, MAX(added_date) as last_seen, COUNT(issue_id) as nb_errors, issue_id, MAX(app_version_code) as version_code, MAX(app_version_name) as version_name, package_name, phone_model, android_version, stack_trace FROM crashes WHERE status = 0 GROUP BY issue_id ORDER BY version_code DESC, last_seen DESC

@@ -1,0 +1,89 @@
+h1, h2, h3 {
+        font-family: Trebuchet MS;
+        color: #039;
+}
+
+table.crashes {
+        font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+        font-size: 12px;
+        background: #fff;
+        padding: 25px;
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+}
+table.crashes th {
+        font-size: 14px;
+        font-weight: normal;
+        color: #039;
+        padding: 10px 8px;
+        border-bottom: 2px solid #6678b1;
+}
+table.crashes thead th {
+        text-align: center;
+}
+
+table.crashes td {
+        border-bottom: 1px solid #ccc;
+        color: #669;
+        padding: 6px 8px;
+}
+table.crashes tbody tr:hover td {
+        color: #009;
+}
+
+a, a:hover, a:visited {
+        text-decoration: none;
+        color: #33F;
+}
+a:active {
+        color: red;
+}
+
+a.button {
+        color: #000;
+        font-family:Arial,sans-serif;
+        font-size:1.2em;
+        width:300px;
+        height:43px;
+        padding:7px;
+        text-shadow:0px 1px 0px rgba(255,255,255,0.2);
+        -webkit-border-radius:8px;
+        -moz-border-radius:8px;
+        border-radius:8px;
+        background: #444;
+        background: -moz-linear-gradient(top,#888,#555);
+        background: -webkit-gradient(linear, left top, left bottom, from(#888), to(#555));
+        -webkit-box-shadow:     0 0 5px rgba(0,0,0,0.5),
+                                0 -1px 0 rgba(255,255,255,0.4);
+        -moz-box-shadow:        0 0 5px rgba(0,0,0,0.5),
+                                0 -1px 0 rgba(255,255,255,0.4);
+        box-shadow:             0 0 5px rgba(0,0,0,0.5),
+                                0 -1px 0 rgba(255,255,255,0.4);
+}
+a.button:hover {
+        color:#222;
+        background:#555;
+        background:-moz-linear-gradient( top, #777, #333);
+        background:-webkit-gradient( linear, left top, left bottom, from(#777), to(#333));
+}
+a.button:active{
+    color:#000;
+    background:#444;
+    background:-moz-linear-gradient( top, #555, #2C2C2C);
+    background:-webkit-gradient( linear, left top, left bottom, from(#555), to(#2C2C2C));
+    -webkit-box-shadow:1px 1px 10px black inset, 0 1px 0 rgba(255,255,255,0.4);
+       -moz-box-shadow:1px 1px 10px black inset, 0 1px 0 rgba(255,255,255,0.4);
+            box-shadow:1px 1px 10px black inset, 0 1px 0 rgba(255,255,255,0.4);
+}
+
+pre {
+        white-space: pre-wrap;       /* css-3 */
+        white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+        white-space: -pre-wrap;      /* Opera 4-6 */
+        white-space: -o-pre-wrap;    /* Opera 7 */
+        word-wrap: break-word;       /* Internet Explorer 5.5+ */
+        padding-left: 25px;
+        margin-bottom: 25px;
+        border-left: 1px lightgrey solid;
+}
