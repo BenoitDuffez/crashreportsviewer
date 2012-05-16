@@ -17,7 +17,7 @@ On the server
 On the client
 -------------
 
-ACRA should sent reports to `http://server.tld/path/to/submit.php`
+ACRA should sent reports to `http://server.tld/path/to/submit.php`. Example annotation of your Android `Application` class:
 
 	@ReportsCrashes(formKey = "", // will not be used
 					formUri = "http://yourserver.com/path/to/submit.php",
@@ -36,14 +36,16 @@ Usage
 Pages
 -----
 
-  * index.php : dashboard of the crashes of your applications
-  * report.php : view a single report, identified by its "issue_id"
-  * reports.php : view all reports, grouped by issue_id
+  * `index.php` : dashboard of the crashes of your applications
+  * `report.php` : view a single report, identified by its `issue_id`
+  * `reports.php` : view all reports, grouped by `issue_id`
 
-You can filter by package name (* wildcard supported): `http://server.tld/com.yourcompany.yourproduct/reports.php` will display all information regarding "com.yourcompany.yourproduct" package only.
 
 Features
 --------
 
   * `issue_id`: this is an md5sum of the exceptions and where they occured. This should give a unique identifier for the crash, and all crashes caused by the same issue (same exceptions at the same files/lines) should share the same `issue_id`.
+  * You can filter by package name: `http://server.tld/com.yourcompany.yourproduct/reports.php` will display all information regarding `"com.yourcompany.yourproduct"` package only.
+  * Wildcards in package name are supported: `http://server.tld/com.yourcompany.*/reports.php` will work.
+
 
