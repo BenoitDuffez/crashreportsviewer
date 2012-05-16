@@ -40,8 +40,8 @@ Pages
   * `report.php` : view a single report, identified by its `issue_id`
   * `reports.php` : view all reports, grouped by `issue_id`
 
-  Image: Example of the dashboard
-!dashboard.png!
+  Image: Example of the dashboard  
+![Dashboard overview](https://github.com/BicouQ/crashreportsviewer/dashboard.png)
 
 Features
 --------
