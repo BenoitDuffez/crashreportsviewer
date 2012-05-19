@@ -11,8 +11,6 @@ On the server
 -------------
 
   * This application has to be installed on a Apache/PHP/*SQL machine configuration.
-  * MySQL server connection has to be configured in `./www/mysql.php`
-  * Table should already be created.
 
 On the client
 -------------
