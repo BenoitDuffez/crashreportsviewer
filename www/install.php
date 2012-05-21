@@ -49,7 +49,7 @@ if (!isset($_POST[submit])) {
 				echo '<div class="ok">Wrote `config.php`.</div>';
 
 				// Create table
-				$res = mysql_query(<<<SQL_CREATE
+				$sql = <<<SQL_CREATE
 CREATE TABLE IF NOT EXISTS `crashes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `added_date` int(11) NOT NULL,
@@ -92,7 +92,8 @@ CREATE TABLE IF NOT EXISTS `crashes` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8
 
-SQL_CREATE);
+SQL_CREATE;
+				$res = mysql_query($sql);
 				if (!$res) {
 					echo '<div class="error">Create table failed.</p>';
 				} else {
