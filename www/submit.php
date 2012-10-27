@@ -26,6 +26,7 @@ foreach($_POST as $k => $v) {
 // Add custom data
 $object['added_date'] = time();
 $object['status'] = STATE_NEW;
+$object['issue_id'] = bicou_issue_id($object['stack_trace'], $object['package_name']);
 
 // Save to DB
 $sql = bicou_mysql_insert($object);
