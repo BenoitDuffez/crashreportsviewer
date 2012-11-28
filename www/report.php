@@ -11,38 +11,101 @@ include "html.php";
 include "mysql.php";
 include "crashes.php";
 
-function showReport($tab) {
-	echo "<h1>Report #".$tab['id']."</h1>\n";
-	echo '<div style="margin: 45px;">'."\n";
-	foreach ($tab as $k => $v) {
-		if ($k == "id") {
-			continue;
-		} else if ($k == "added_date") {
-			if (intval($v) > 0) {
-				$v = date('d/M/Y G:i:s', intval($v));
-			} else {
-				$v = "Date unknown";
-			}
-		} else if ($k == "status") {
-			if (intval($v) == STATE_FIXED) {
-				$v = 'fixed';
-			} else {
-				$v = 'new';
-			}
+function summaryLine($name, $value) {
+	echo "<tr><th>";
+	echo $name;
+	echo "</th><td>";
+	echo $value;
+	echo "</td></tr>\n";
+}
+
+function detailsLink($tab, $field, $name, $end) {
+	if($tab[$field] != "") {
+		echo '<a href="javascript:void(0);" onclick="setDetailsContent(';
+		echo $tab['id'];
+		echo ", '";
+		echo $field;
+		echo "'";
+		echo ')">';
+		echo $name;
+		echo '</a>';
+		if($end) {
+			echo " | ";
 		}
-
-		$v = htmlspecialchars($v);
-
-		echo "<h2>$k</h2>\n<pre>$v</pre>\n";
 	}
+}
+
+function showReport($tab) {
+	echo '<div id="report_' . $tab['id'] . '" style="margin: 45px; clear:both;">'."\n";
+	echo "<h1>Report #".$tab['id']."</h1>\n";
+	echo '<div id="summary_' . $tab['id'] . '" style="float:left; width:30%">';
+	echo '<table>';
+	summaryLine("Report #", $tab['id']);
+	$added = '';
+	if (intval($tab['added_date']) > 0) {
+		$added = date('d/M/Y G:i:s', intval($tab['added_date']));
+	} else {
+		$added = "Date unknown";
+	}
+	summaryLine("Added", $added);
+	$status = "";
+	if (intval($tab['status']) == STATE_FIXED) {
+		$status = 'fixed';
+	} else {
+		$status = 'new';
+>>>>>>> 9e6be88... made interface more ajaxy, and make the reports far easier to read
+	}
+	summaryLine("Status", $status);
+	summaryLine("Report ID", $tab['report_id']);
+	summaryLine("Issue ID", $tab['issue_id']);
+	$device = $tab['brand'] . ' ' . $tab['phone_model'] . ' (' . $tab['product'] . ')'. " Running Android " . $tab['android_version'];
+	summaryLine("Device", $device);
+	summaryLine("Package", $tab['package_name']);
+	$version = $tab['app_version_name'] . ' (' . $tab['app_version_code'] . ')';
+	summaryLine("Version", $version);
+	summaryLine("File Path", $tab['file_path']);
+	summaryLine("Total Mem", intval(intval($tab['total_mem_size']) / 1024 / 1024) . "M");
+	summaryLine("Available Mem", intval(intval($tab['available_mem_size']) / 1024 / 1024) . "M");
+	summaryLine("User App Start Date", $tab['user_app_start_date']);
+	summaryLine("User Crash Date", $tab['user_crash_date']);
+	summaryLine("Is Silent", $tab['is_silent']);
+	summaryLine("Device Id", $tab['device_id']);
+	summaryLine("Installation Id", $tab['installation_id']);
+	summaryLine("User Email", $tab['user_email']);
+	echo '</table>';
+	echo "</div>";
+	echo "<div id='details_" . $tab['id'] . "' style='float:right; width:70%'>";
+	echo "<div id='details_header_" . $tab['id'] . "'>";
+	echo '<span>';
+	detailsLink($tab, 'stack_trace', 'Stack Trace', True);
+	detailsLink($tab, 'custom_data', 'Custom Data', True);
+	detailsLink($tab, 'build', 'Build', True);
+	detailsLink($tab, 'initial_configuration', 'Initial Config', True);
+	detailsLink($tab, 'crash_config', 'Crash Config', True);
+	detailsLink($tab, 'display', 'Display', True);
+	detailsLink($tab, 'user_comment', 'User Comment', True);
+	detailsLink($tab, 'dumpsys_meminfo', 'Dumpsys Meminfo', True);
+	detailsLink($tab, 'dropbox', 'Dropbox', True);
+	detailsLink($tab, 'logcat', 'Logcat', True);
+	detailsLink($tab, 'eventslog', 'Events Log', True);
+	detailsLink($tab, 'radiolog', 'Radio Log', True);
+	detailsLink($tab, 'device_features', 'Device Features', True);
+	detailsLink($tab, 'environment', 'Environment', True);
+	detailsLink($tab, 'settings_system', 'System Settings', True);
+	detailsLink($tab, 'settings_secure', 'Secure Settings', True);
+	detailsLink($tab, 'shared_preferences', 'Shared Preferences', False);
+	echo '</span>';
+	echo "</div>";
+	echo "<div id='details_content_" . $tab['id'] . "'><pre>" . $tab['stack_trace'] . "</pre></div>";
+	echo "</div>";
 	echo "</div>\n";
 }
 
 // Show button
 echo '<div style="float: right; margin-right: 100px;">';
-echo '<a class="button" href="javascript:setStatusAndGo(\''.$_GET['issue_id'].'\', \''.STATE_FIXED.'\', \'/reports.php\');">mark as fixed</a> ';
-echo '<a class="button" href="javascript:setStatusAndGo(\''.$_GET['issue_id'].'\', \''.STATE_INVALID.'\', \'/reports.php\');">mark as invalid</a> ';
-echo '<a class="button" href="javascript:setStatusAndGo(\''.$_GET['issue_id'].'\', \''.STATE_NEW.'\', \'/reports.php\');">mark as new</a> ';
+echo '<a class="button" href="javascript:setStatusAndGo(\''.$_GET['issue_id'].'\', \''.STATE_FIXED.'\', \'reports.php\');">mark as fixed</a> ';
+echo '<a class="button" href="javascript:setStatusAndGo(\''.$_GET['issue_id'].'\', \''.STATE_INVALID.'\', \'reports.php\');">mark as invalid</a> ';
+echo '<a class="button" href="javascript:setStatusAndGo(\''.$_GET['issue_id'].'\', \''.STATE_NEW.'\', \'reports.php\');">mark as new</a> ';
 echo "</div>\n";
 
 // Display reports
