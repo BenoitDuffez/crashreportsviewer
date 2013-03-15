@@ -21,6 +21,7 @@ On the server
 	$mysql_db = 'db_name';
 	
 
+
 On the client
 -------------
 
@@ -36,7 +37,6 @@ ACRA should sent reports to `http://server.tld/path/to/submit.php`. Example anno
 	...
 
 
-	
 Usage
 =====
 
