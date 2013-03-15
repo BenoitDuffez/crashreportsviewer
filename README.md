@@ -14,12 +14,11 @@ On the server
   * You should create a `config.php` file that indicates where is the SQL server. Example:
 
 	<?php
-	
 	$mysql_server = 'mysql.server.com'; // usually it's simply localhost
 	$mysql_user = 'username';
 	$mysql_password = 'password';
 	$mysql_db = 'db_name';
-	
+	 
 
 
 On the client
