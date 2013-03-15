@@ -3,9 +3,9 @@
 include "mysql.php";
 include "crashes.php";
 
-$f = fopen("last_access", "w");
-fputs($f, "access on ".date("d/M/Y G:i:s")."\n");
-fclose($f);
+//$f = fopen("last_access", "w");
+//fputs($f, "access on ".date("d/M/Y G:i:s")."\n");
+//fclose($f);
 
 ob_start();
 
@@ -40,9 +40,9 @@ if ($success != TRUE) {
 // Close MySQL
 mysql_close($mysql);
 
-$f = fopen("log", "w+");
-fputs($f, "Output of ".date("d/M/Y G:i:s").":\n".ob_get_clean());
-fclose($f);
+//$f = fopen("log", "w+");
+//fputs($f, "Output of ".date("d/M/Y G:i:s").":\n".ob_get_clean());
+//fclose($f);
 
 echo "Oh, hai!";
 
