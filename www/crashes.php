@@ -112,11 +112,17 @@ function display_versions() {
 	}
 
 	echo "</tbody>\n</table>\n";
-	echo '<div id="chart1" style="height:300px;width:300px; "></div>';
+	echo '<div id="chart1" style="height:300px;width:500px; "></div>';
 	echo "<script>$(document).ready(function(){
   var data = [";
 
+	$first=true;
 	foreach ($versions as $id => $version) {
+		if (!$first) {
+			echo ", ";
+		} else {
+			$first = false;
+		}
 		echo "['V$version', ".$nb_errors[$id]."] ";
 	}
 	echo "  ];
@@ -125,10 +131,15 @@ function display_versions() {
       seriesDefaults: {
 	renderer: jQuery.jqplot.PieRenderer,
 	rendererOptions: {
-	  showDataLabels: true
+	  dataLabelFormatString: '%.1f%%',
+          showDataLabels: true
 	}
       },
-      legend: { show:true, location: 'e' }
+      legend: {
+        show:true,
+        location: 'e',
+        rendererOptions: { numberColumns: 3 },
+      }
     }
   );
 });</script>";

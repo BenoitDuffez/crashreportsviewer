@@ -6,7 +6,7 @@ function show_output() {
 
 	$regex = "#^(.*)/".$_GET[package]."#";
 	if ($_GET[package] && preg_match($regex, $_SERVER[REQUEST_URI], $matches)) {
-		$root = $matches[1];
+		$root = "/".$matches[1];
 	} else if (preg_match("#(.*)/([^\.]+)\.php#", $_SERVER[REQUEST_URI], $matches)) {
 		$root = $matches[1];
 	} else {
