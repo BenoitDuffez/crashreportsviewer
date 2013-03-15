@@ -48,6 +48,57 @@ if (!isset($_POST[submit])) {
 				fclose($file);
 				echo '<div class="ok">Wrote `config.php`.</div>';
 
+				// Create table
+				$sql = <<<SQL_CREATE
+CREATE TABLE IF NOT EXISTS `crashes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `added_date` int(11) NOT NULL,
+  `status` int(11) NOT NULL,
+  `issue_id` varchar(32) NOT NULL,
+  `report_id` text NOT NULL,
+  `app_version_code` text NOT NULL,
+  `app_version_name` text NOT NULL,
+  `package_name` text NOT NULL,
+  `file_path` text NOT NULL,
+  `phone_model` text NOT NULL,
+  `android_version` text NOT NULL,
+  `build` text NOT NULL,
+  `brand` text NOT NULL,
+  `product` text NOT NULL,
+  `total_mem_size` int(11) NOT NULL,
+  `available_mem_size` int(11) NOT NULL,
+  `custom_data` text NOT NULL,
+  `stack_trace` text NOT NULL,
+  `initial_configuration` text NOT NULL,
+  `crash_configuration` text NOT NULL,
+  `display` text NOT NULL,
+  `user_comment` text NOT NULL,
+  `user_app_start_date` text NOT NULL,
+  `user_crash_date` text NOT NULL,
+  `dumpsys_meminfo` text NOT NULL,
+  `dropbox` text NOT NULL,
+  `logcat` text NOT NULL,
+  `eventslog` text NOT NULL,
+  `radiolog` text NOT NULL,
+  `is_silent` text NOT NULL,
+  `device_id` text NOT NULL,
+  `installation_id` text NOT NULL,
+  `user_email` text NOT NULL,
+  `device_features` text NOT NULL,
+  `environment` text NOT NULL,
+  `settings_system` text NOT NULL,
+  `settings_secure` text NOT NULL,
+  `shared_preferences` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8
+
+SQL_CREATE;
+				$res = mysql_query($sql);
+				if (!$res) {
+					echo '<div class="error">Create table failed.</p>';
+				} else {
+					echo '<div class="ok">Created the table</div>';
+				}
 				// .htaccess
 				$file = fopen(".htaccess", "w");
 				if (!$file) {
