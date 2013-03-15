@@ -1,0 +1,16 @@
+AuthUserFile /home/bicou/crashes.htpasswd
+AuthGroupFile /dev/null
+AuthName "Oh hai."
+AuthType Basic
+
+<Limit GET POST>
+require valid-user
+</Limit>
+
+Options +FollowSymlinks
+RewriteCond %{REQUEST_URI} ^/dist.* [NC]
+RewriteRule .* - [L]
+
+RewriteEngine on
+RewriteRule ^([^/]+)/([^/]+)       $2?package=$1 [QSA]
+
