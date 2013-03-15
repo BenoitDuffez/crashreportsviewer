@@ -1,6 +1,6 @@
 <?php
 
-@include "config.php";
+@include "../config.php";
 
 $mysql = mysql_connect($mysql_server, $mysql_user, $mysql_password);
 if (!$mysql) {
