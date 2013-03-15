@@ -17,9 +17,13 @@ if (!isset($_GET[status])) {
 	$status = $_GET[status];
 }
 
+//dbug(__FILE__, __LINE__);
 display_versions();
+//dbug(__FILE__, __LINE__);
 display_crashes($status);
+//dbug(__FILE__, __LINE__);
 mysql_close();
+//dbug(__FILE__, __LINE__);
 
 ?></body>
 </html>

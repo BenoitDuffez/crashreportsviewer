@@ -1,5 +1,12 @@
 <?php
 
+$max = 0 + $_GET[max];
+if ($max > 0 && $max < 1000) {
+	define('MAX_REPORTS', 0 + $_GET[max]);
+} else {
+	define('MAX_REPORTS', 20);
+}
+
 include "html.php";
 include "mysql.php";
 include "crashes.php";
@@ -24,6 +31,8 @@ function showReport($tab) {
 			}
 		}
 
+		$v = htmlspecialchars($v);
+
 		echo "<h2>$k</h2>\n<pre>$v</pre>\n";
 	}
 	echo "</div>\n";
@@ -37,8 +46,8 @@ echo '<a class="button" href="javascript:setStatusAndGo(\''.$_GET['issue_id'].'\
 echo "</div>\n";
 
 // Display reports
-$sql = bicou_mysql_select(null, "issue_id = '?'", array($_GET[issue_id]));
-$sql .= " LIMIT 0, 100";
+$sql = bicou_mysql_select(null, "crashes", "issue_id = '?'", array($_GET[issue_id]));
+$sql .= " LIMIT 0, ".MAX_REPORTS;
 $res = mysql_query($sql);
 
 if (!$res) {

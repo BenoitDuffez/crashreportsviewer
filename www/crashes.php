@@ -1,5 +1,14 @@
 <?php
 
+$start = microtime();
+function dbug($file, $line) {
+	global $start;
+	$now = microtime();
+	echo sprintf("<p>$file:$line: %.3f ms</p>", 1000 * ($now - $start));
+	$start = $now;
+}
+dbug(__FILE__, __LINE__);
+
 error_reporting(E_ALL & ~E_NOTICE);
 
 define('STATE_NEW', 0);
@@ -32,7 +41,7 @@ function array_find($needle, $haystack) {
 	return FALSE;
 }
 
-function bicou_issue_id($stack_trace, $package) {
+function bicou_short_stack_trace($stack_trace, $package) {
 	$lines = explode("\n", $stack_trace);
        //$idx = array_find('Caused by:', $lines);
        //$v = $lines[$idx];
@@ -47,7 +56,11 @@ function bicou_issue_id($stack_trace, $package) {
 	       }
 	   }
        }
-	return md5($value);
+	return $value;
+}
+
+function bicou_issue_id($stack_trace, $package) {
+	return md5(bicou_short_stack_trace($stack_trace, $package));
 }
 
 function display_versions() {
@@ -65,9 +78,9 @@ function display_versions() {
 		$selA = null;
 	}
 
-	$order = "app_version_code ASC";
+	$order = "(0+app_version_code) DESC";
 	$group = "app_version_code";
-	$sql = bicou_mysql_select($columns, $sel, $selA, $order, $group);
+	$sql = bicou_mysql_select($columns, "crashes", $sel, $selA, $order, $group);
 	$res = mysql_query($sql);
 	if (!$res || mysql_num_rows($res) ==0) {
 		echo "<p>unable to compute versions<br />$sql</p>\n";
@@ -134,12 +147,12 @@ function get_nb_crashes_per_package($package) {
 	$order = "date ASC";
 	$group = "date";
 	
-	$sql = bicou_mysql_select($columns, $sel, $selA, $order, $group);
+	$sql = bicou_mysql_select($columns, "crashes", $sel, $selA, $order, $group);
 	$res = mysql_query($sql);
 	
 	if (!$res || !mysql_num_rows($res)) {
 		echo "<p>$sql</p>";
-		echo "<p>Server error.</p>";
+		echo "<p>Server error: ".mysql_error()."</p>";
 		return;
 	}
 	
@@ -155,12 +168,12 @@ function display_crashes_vs_date() {
 	
 	$columns = array('package_name');
 	
-	$sql = bicou_mysql_select(array('package_name'), null, null, 'package_name asc', 'package_name');
+	$sql = bicou_mysql_select(array('package_name'), "crashes", null, null, 'package_name asc', 'package_name');
 	$res = mysql_query($sql);
 	
 	if (!res || !mysql_num_rows($res)) {
 		echo "<p>$sql</p>";
-		echo "<p>Server error.</p>";
+		echo "<p>Server error: ".mysql_error()."</p>";
 		return;
 	}
 	
@@ -232,12 +245,24 @@ function display_crashes_vs_date() {
 }
 
 function display_crashes($status) {
-	global $_GET, $package;
+	global $_GET;
 
-	$columns = array('id', /* 'status', */ 'MAX(added_date) as last_seen', 'COUNT(issue_id) as nb_errors', issue_id,
-		'MAX(app_version_code) as version_code', 'MAX(app_version_name) as version_name', 'package_name',
-		'phone_model', 'android_version', // 'brand', 'product',
-		'stack_trace');
+	$columns = array();
+	// $columns[] = 'id';
+	// $columns[] = 'status';
+	$columns[] = 'MAX(added_date) as last_seen';
+	$columns[] = 'COUNT(issue_id) as nb_errors';
+	$columns[] = issue_id;
+	if (!$_GET[v]) {
+		$columns[] = 'MAX(app_version_code) as version_code';
+	}
+	$columns[] = 'MAX(app_version_name) as version_name';
+	$columns[] = 'package_name';
+	$columns[] = 'phone_model';
+	$columns[] = 'android_version';
+	// $columns[] = 'brand';
+	// $columns[] = 'product';
+	$columns[] = 'stack_trace';
 
 	$sel = "status = ?";
 	$selA = array($status);
@@ -269,17 +294,34 @@ function display_crashes($status) {
 		}
 	}
 
-	$order = "";
+	$order = array();
 	if ($_GET[v]) {
-		$order .= "nb_errors DESC, ";
+		$order[] = "nb_errors DESC";
 	}
-	$order .= "version_code DESC, last_seen DESC";
-	$sql = bicou_mysql_select($columns, $sel, $selA, $order, "issue_id");
+	
+	if ($_GET[start]) {
+		$start = $_GET[start];
+	} else {
+		$start = 0;
+	}
+
+	if (!$_GET[v]) {
+		$order[] = "version_code DESC";
+	}
+	$order[] = "last_seen DESC";
+//dbug(__FILE__, __LINE__);
+
+	$tables = "crashes";
+
+	$sql = bicou_mysql_select($columns, $tables, $sel, $selA, implode(", ", $order), "issue_id", "$start, 50");
+//	echo "<p>$sql</p>";
+//dbug(__FILE__, __LINE__);
 	$res = mysql_query($sql);
 
+//dbug(__FILE__, __LINE__);
 	if (!$res) {
 		bicou_log("Unable to query: $sql");
-		echo "<p>Server error.</p>\n";
+		echo "<p>Server error: ".mysql_error()."</p>\n";
 		echo "<p>SQL: $sql</p>";
 		return;
 	} else if (mysql_num_rows($res) == 0) {
@@ -294,11 +336,14 @@ function display_crashes($status) {
 	$first = 1;
 	echo "<table class=\"crashes\">\n";
 	while ($tab = mysql_fetch_assoc($res)) {
+//dbug(__FILE__, __LINE__);
 		if ($first == 1) {
-			echo "<thead>\n<tr>\n";
+			echo "<thead>\n<tr><th>&nbsp;</th>\n";
 			foreach ($tab as $k => $v) {
 				if ($k == "stack_trace") {
 					$k = "exception";
+				} else if ($k == "issue_id") {
+					continue;
 				}
 
 				echo "<th>$k</th>\n";
@@ -307,68 +352,70 @@ function display_crashes($status) {
 			echo "</tr>\n</thead>\n<tbody>\n";
 		}
 
-		echo '<tr id="id_'.$tab['id'].'" onclick="javascript:document.location=\'/report.php?issue_id='.$tab['issue_id'].'\';">'."\n";
+		echo '<tr id="id_'.$tab['id'].'"><td><a href="/report.php?issue_id='.$tab['issue_id'].'">VIEW</a></td>'."\n";
 		foreach ($tab as $k => $v) {
 			if ($k == "stack_trace") {
 				$lines = explode("\n", $v);
 				//$idx = array_find('Caused by:', $lines);
 				//$v = $lines[$idx];
-				if (array_find(": ", $lines) === FALSE && array_find(PACKAGE, $lines) === FALSE) {
+				if (array_find(": ", $lines) === FALSE && array_find($_GET[package], $lines) === FALSE) {
 					$value = $lines[0];
 				} else {
+					$st = bicou_short_stack_trace($v, $_GET[package]);
 					$value = "";
 					foreach ($lines as $id => $line) {
-						if (strpos($line, ": ") !== FALSE || strpos($line, PACKAGE) !== FALSE
-							|| strpos($line, "Error") !== FALSE || strpos($line, "Exception") !== FALSE) {
+						if (//strpos($line, $_GET[package]) !== FALSE ||
+							strpos($line, "Error") !== FALSE || strpos($line, "Exception") !== FALSE) {
 							$value .= $line . "<br />";
 						}
 					}
 				}
 
-				if ($tab['issue_id'] == "") {
-					mysql_query(bicou_mysql_update(array('issue_id' => md5($value)), "id = ?", array($tab['id'])));
-				}
+//				if ($tab['issue_id'] == "") {
+//					mysql_query(bicou_mysql_update(array('issue_id' => md5($value)), "id = ?", array($tab['id'])));
+//				}
 			} else if ($k == "last_seen") {
 				$value = date("d/M/Y G:i:s", $v);
 			} else if ($k == "status") {
 				$value = status_name($tab['status']);
 			} else if ($k == "version_code") {
-				$c = array('app_version_code', 'count(app_version_code) as nb');
-				$sl = "issue_id = '?'";
-				$slA = array($tab[issue_id]);
 				if ($_GET[v]) {
-					$sl .= " AND app_version_code = ?";
-					$slA[] = $_GET[v];
-				}
-				$s = bicou_mysql_select($c, $sl, $slA, 'nb DESC', 'app_version_code');
-				$r = mysql_query($s);
-				$js = "$(document).ready(function(){\n"."\tvar data = [\t";
-				$value = "";
-				while ($t = mysql_fetch_assoc($r)) {
-					if (strlen($value)) {
-						$js .= ", ";
+					$value = "N/A";
+				} else {
+					$c = array('app_version_code', 'count(app_version_code) as nb');
+					$sl = "issue_id = '?'";
+					$slA = array($tab[issue_id]);
+					$s = bicou_mysql_select($c, "crashes", $sl, $slA, 'nb DESC', 'app_version_code');
+					$r = mysql_query($s);
+					$js = "$(document).ready(function(){\n"."\tvar data = [\t";
+					$value = "";
+					while ($t = mysql_fetch_assoc($r)) {
+						if (strlen($value)) {
+							$js .= ", ";
+						}
+						$js .= "['V: ".$t[app_version_code]."', ".$t[nb]."]";
+						$value .= '<b title="'.$t[nb].' occurrences">'.$t[app_version_code]."</b> (".sprintf("%.1f%%", 100.0*$t[nb]/$tab[nb_errors]).")<br />";
 					}
-					$js .= "['V: ".$t[app_version_code]."', ".$t[nb]."]";
-					$value .= '<b title="'.$t[nb].' occurrences">'.$t[app_version_code]."</b> (".sprintf("%.1f%%", 100.0*$t[nb]/$tab[nb_errors]).")<br />";
+
+					$js .= "\t ];\n"
+						."	var plot_".$tab[issue_id]." = jQuery.jqplot ('chartdiv_".$tab[issue_id]."', [data], \n"
+						."	      { \n"
+						."		seriesDefaults: {\n"
+						."		      renderer: jQuery.jqplot.PieRenderer, \n"
+						."		      rendererOptions: {\n"
+						."			showDataLabels: true\n"
+						."		      }\n"
+						."		}, \n"
+						."	      }\n"
+						."	);\n"
+						."      });\n";
+
+					$value .= '<div id="chartdiv_'.$tab[issue_id].'" style="height:200px;width:200px; "></div>';
+					$value .= '<script>'.$js.'</script>';
 				}
-
-				$js .= "\t ];\n"
-					."	var plot_".$tab[issue_id]." = jQuery.jqplot ('chartdiv_".$tab[issue_id]."', [data], \n"
-					."	      { \n"
-					."		seriesDefaults: {\n"
-					."		      renderer: jQuery.jqplot.PieRenderer, \n"
-					."		      rendererOptions: {\n"
-					."			showDataLabels: true\n"
-					."		      }\n"
-					."		}, \n"
-					."	      }\n"
-					."	);\n"
-					."      });\n";
-
-				$value .= '<div id="chartdiv_'.$tab[issue_id].'" style="height:200px;width:200px; "></div>';
-				$value .= '<script>'.$js.'</script>';
 			} else if ($k == "TODO") {
-
+			} else if ($k == "issue_id") {
+				continue;
 			} else {
 				$value = $v;
 			}

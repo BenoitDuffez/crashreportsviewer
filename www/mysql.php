@@ -19,12 +19,19 @@ function bicou_mysql_insert($object) {
 	return $cols.$vals;
 }
 
-function bicou_mysql_select($columns = NULL, $selection = NULL, $selectionArgs = NULL, $order = NULL, $group = NULL) {
+function bicou_mysql_select($columns = NULL, $table = NULL, $selection = NULL, $selectionArgs = NULL, $order = NULL, $group = NULL, $limit = NULL) {
 	// Columns
 	if ($columns != NULL) {
 		$cols = implode(", ", $columns);
 	} else {
 		$cols = "*";
+	}
+
+	// Table
+	if ($table != NULL) {
+		$tbl = "FROM ".$table;
+	} else {
+		$tbl = "FROM crashes";
 	}
 
 	// Selection
@@ -51,7 +58,16 @@ function bicou_mysql_select($columns = NULL, $selection = NULL, $selectionArgs =
 		$grp = "";
 	}
 
-	return "SELECT $cols FROM crashes WHERE $condition $grp ORDER BY $order";
+	// Limit
+	if ($limit != null) {
+		$lmt = "LIMIT ".mysql_real_escape_string($limit);
+	} else {
+		$lmt = "";
+	}
+
+	$sql = "SELECT $cols $tbl WHERE $condition $grp ORDER BY $order $lmt";
+//	echo $sql;
+	return $sql;
 }
 
 function bicou_mysql_update($object, $selection, $selectionArgs) {
