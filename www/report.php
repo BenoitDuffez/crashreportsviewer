@@ -53,7 +53,6 @@ function showReport($tab) {
 		$status = 'fixed';
 	} else {
 		$status = 'new';
->>>>>>> 9e6be88... made interface more ajaxy, and make the reports far easier to read
 	}
 	summaryLine("Status", $status);
 	summaryLine("Report ID", $tab['report_id']);

@@ -4,7 +4,7 @@ include "mysql.php";
 include "crashes.php";
 
 // Display reports
-$sql = bicou_mysql_select(array($_GET[field]), "id = '?'", array($_GET[id]));
+$sql = bicou_mysql_select(array($_GET[field]), "crashes", "id = '?'", array($_GET[id]));
 $sql .= " LIMIT 0, 100";
 $res = mysql_query($sql);
 

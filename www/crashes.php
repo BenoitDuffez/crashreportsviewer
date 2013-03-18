@@ -7,7 +7,7 @@ function dbug($file, $line) {
 	echo sprintf("<p>$file:$line: %.3f ms</p>", 1000 * ($now - $start));
 	$start = $now;
 }
-dbug(__FILE__, __LINE__);
+//dbug(__FILE__, __LINE__);
 
 error_reporting(E_ALL & ~E_NOTICE);
 
