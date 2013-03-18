@@ -16,7 +16,7 @@ define('STATE_FIXED', 1);
 define('STATE_INVALID', 2);
 
 function bicou_log($msg) {
-	$file = fopen("err_", "a+");
+	$file = fopen("../logs/err_", "a+");
 	fputs($file, date("d/M/Y G:i:s\t") . $msg . "\n");
 	fclose($file);
 }
