@@ -4,12 +4,10 @@ include "html.php";
 include "mysql.php";
 include "crashes.php";
 
-// Search form
-echo '<form method="get" action="reports.php">'."\n";
-echo 'Filter by phone_model: <input type="text" name="q" value="'.$_GET[q].'" /> <input type="submit" value="Search" />'."\n";
-echo "</form>\n";
-
-echo '<center><a href="?status='.STATE_NEW.'">New reports</a> | <a href="?status='.STATE_FIXED.'">Fixed reports</a> | <a href="?status='.STATE_INVALID.'">Invalid reports</a></center>'."\n";
+echo " 
+<center>
+  <a href=\"?status=".STATE_NEW."\">New reports</a> | <a href=\"?status=".STATE_FIXED."\">Fixed reports</a> | <a href=\"?status=".STATE_INVALID."\">Invalid reports</a>
+</center>";
 
 if (!isset($_GET[status])) {
 	$status = STATE_NEW;
@@ -17,15 +15,16 @@ if (!isset($_GET[status])) {
 	$status = $_GET[status];
 }
 
-//dbug(__FILE__, __LINE__);
-display_versions();
+display_versions_table();
+if (isset($_GET[v])) {
+	display_crashes($status);
+} else {
+	display_versions_pie_chart();
+	display_crashes_vs_date_per_version($_GET[package]);
+}
 
-display_crashes_vs_date_per_version($_GET[package]);
-
-//dbug(__FILE__, __LINE__);
-display_crashes($status);
-//dbug(__FILE__, __LINE__);
 mysql_close();
-//dbug(__FILE__, __LINE__);
 
 ?>
+<p>&nbsp;</p>
+

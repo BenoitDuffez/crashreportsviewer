@@ -1,5 +1,8 @@
 <?php
 
+define('HTACCESS_FILE', $_SERVER[DOCUMENT_ROOT]."/.htaccess");
+define('CONFIG_FILE', $_SERVER[DOCUMENT_ROOT]."/../config.php");
+
 $start = microtime();
 function dbug($file, $line) {
 	global $start;
@@ -104,11 +107,11 @@ JS;
 
 function status_name($status) {
 	if (intval($status) == STATE_NEW) {
-		return "new";
+		return "New";
 	} else if (intval($status) == STATE_FIXED) {
-		return "fixed";
+		return "Fixed";
 	} else {
-		return "invalid";
+		return "Invalid";
 	}
 }
 
@@ -154,8 +157,8 @@ function bicou_issue_id($stack_trace, $package) {
 	return md5(bicou_short_stack_trace($stack_trace, $package));
 }
 
-function display_versions() {
-	global $_GET;
+function display_versions_table() {
+	global $_GET, $versions, $nb_errors;
 
 	$columns = array('id', 'max(added_date) as last_seen',
 					'count(issue_id) as nb_errors',
@@ -203,9 +206,16 @@ function display_versions() {
 	}
 
 	echo "</tbody>\n</table>\n";
-	echo '<div id="chart1" style="height:300px;width:500px; "></div>';
-	echo "<script>$(document).ready(function(){
-  var data = [";
+}
+
+function display_versions_pie_chart() {
+	global $_GET, $versions, $nb_errors;
+
+	echo <<<HTML
+<div id="chart1" style="height:300px;width:500px; "></div>
+<script>$(document).ready(function(){
+  var data = [
+HTML;
 
 	$first=true;
 	foreach ($versions as $id => $version) {
@@ -216,15 +226,16 @@ function display_versions() {
 		}
 		echo "['V$version', ".$nb_errors[$id]."] ";
 	}
-	echo "  ];
-  var plot1 = jQuery.jqplot ('chart1', [data],
-    {
-      seriesDefaults: {
-	renderer: jQuery.jqplot.PieRenderer,
-	rendererOptions: {
-	  dataLabelFormatString: '%.1f%%',
+	echo <<<HTML
+  ];
+  var plot1 = jQuery.jqplot ('chart1', [data], {
+    title: 'Crashes vs. versions',
+    seriesDefaults: {
+      renderer: jQuery.jqplot.PieRenderer,
+        rendererOptions: {
+          dataLabelFormatString: '%.1f%%',
           showDataLabels: true
-	}
+        }
       },
       legend: {
         show:true,
@@ -233,8 +244,8 @@ function display_versions() {
       }
     }
   );
-});</script>";
-
+});</script>
+HTML;
 }
 
 function get_nb_crashes_per_package($package) {
