@@ -48,7 +48,7 @@ Pages
   * `reports.php` : view all reports, grouped by `issue_id`
 
   Image: Example of the dashboard  
-![Dashboard overview](raw/master/dashboard.png)
+![Dashboard overview](master/dashboard.png)
 
 Features
 --------
