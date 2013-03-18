@@ -13,8 +13,8 @@ function show_output() {
 		$root = "/";
 	}
 
-	$patt = array("%ROOT%", "%HTML%");
-	$repl = array($root, $html);
+	$patt = array("%ROOT%", "%HTML%", "%PACKAGE_URI%");
+	$repl = array($root, $html, APP_PACKAGE_URI);
 	echo str_replace($patt, $repl, $template);
 }
 

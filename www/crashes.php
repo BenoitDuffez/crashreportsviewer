@@ -2,6 +2,7 @@
 
 define('HTACCESS_FILE', $_SERVER[DOCUMENT_ROOT]."/.htaccess");
 define('CONFIG_FILE', $_SERVER[DOCUMENT_ROOT]."/../config.php");
+define('APP_PACKAGE_URI', isset($_GET[package]) ? "/".$_GET[package] : "/");
 
 $start = microtime();
 function dbug($file, $line) {
@@ -459,7 +460,7 @@ function display_crashes($status) {
 			echo "</tr>\n</thead>\n<tbody>\n";
 		}
 
-		echo '<tr id="id_'.$tab['id'].'"><td><a href="/report.php?issue_id='.$tab['issue_id'].'">VIEW</a></td>'."\n";
+		echo '<tr id="id_'.$tab['id'].'"><td><a href="'.APP_PACKAGE_URI.'/issue/'.$tab['issue_id'].'">VIEW</a></td>'."\n";
 		foreach ($tab as $k => $v) {
 			if ($k == "stack_trace") {
 				$lines = explode("\n", $v);
