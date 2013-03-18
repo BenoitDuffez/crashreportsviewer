@@ -36,9 +36,9 @@ function detailsLink($tab, $field, $name, $end) {
 }
 
 function showReport($tab) {
-	echo '<div id="report_' . $tab['id'] . '" style="margin: 45px; clear:both;">'."\n";
+	echo '<div id="report_' . $tab['id'] . '" class="report">'."\n";
 	echo "<h1>Report #".$tab['id']."</h1>\n";
-	echo '<div id="summary_' . $tab['id'] . '" style="float:left; width:30%">';
+	echo '<div id="summary_' . $tab['id'] . '" class="summary">';
 	echo '<table>';
 	summaryLine("Report #", $tab['id']);
 	$added = '';
@@ -119,7 +119,13 @@ if (!$res) {
 }
 
 echo "<p>".mysql_num_rows($res)." crashes match the issue ID #".$_GET[issue_id]."</p>\n";
+$first = true;
 while ($tab = mysql_fetch_assoc($res)) {
+	if ($first) {
+		$first = false;
+	} else {
+		echo '<hr style="height: 2px;color: #EEEEEE; width: 95%; clear:both;"/>';
+	}
 	showReport($tab);
 }
 

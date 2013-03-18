@@ -1,3 +1,8 @@
+body {
+  font-family:Arial,sans-serif;
+  font-size: 0.8em;
+}
+
 h1, h2, h3 {
 	font-family: Trebuchet MS;
 	color: #039;
@@ -91,6 +96,7 @@ a.button:active{
 }
 
 pre {
+  font-size: 1.2em;
 	white-space: pre-wrap;       /* css-3 */
 	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
 	white-space: -pre-wrap;      /* Opera 4-6 */
@@ -100,3 +106,18 @@ pre {
 	margin-bottom: 25px;
 	border-left: 1px lightgrey solid;
 }
+
+div.report {
+  margin: 45px;
+  clear:both;
+}
+
+div.report div.summary {
+  float:left;
+  width:30%;
+}
+
+div.report div.summary table {
+}
+
+
