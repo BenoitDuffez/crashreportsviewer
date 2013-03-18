@@ -96,8 +96,9 @@ function showReport($tab) {
 	detailsLink($tab, 'shared_preferences', 'Shared Preferences', False);
 	echo '</span>';
 	echo "</div>";
-	echo "<div id='details_content_" . $tab['id'] . "'><pre>" . bicou_stack_trace_overview($tab['stack_trace'], null) . "</pre></div>";
-	echo "</div>";
+	echo "<div id='details_content_" . $tab['id'] . "'><pre>";
+        echo str_replace("<li></li>", "", "<ul><li>".str_replace("<br />", "</li><li>", bicou_stack_trace_overview($tab[stack_trace], null))."</li></ul>");
+	echo "</pre></div>";
 	echo "</div>\n";
 }
 

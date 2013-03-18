@@ -6,7 +6,7 @@ include "crashes.php";
 $field = $_GET[field] == 'overview' ? "stack_trace" : $_GET[field];
 
 // Display reports
-$sql = bicou_mysql_select(array($field), "crashes", "id = '?'", array($_GET[id]), null, null, "0, 100");
+$sql = bicou_mysql_select(array($field), "crashes", "id = ?", array($_GET[id]), null, null, "0, 100");
 $res = mysql_query($sql);
 
 if (!$res) {
