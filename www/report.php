@@ -19,12 +19,12 @@ function summaryLine($name, $value) {
 	echo "</td></tr>\n";
 }
 
-function detailsLink($tab, $field, $name, $end) {
+function detailsLink($tab, $field, $name, $end, $field_alias = null) {
 	if($tab[$field] != "") {
 		echo '<a href="javascript:void(0);" onclick="setDetailsContent(';
-		echo $tab['id'];
+		echo  $tab['id'];
 		echo ", '";
-		echo $field;
+		echo $field_alias != null ? $field_alias : $field;
 		echo "'";
 		echo ')">';
 		echo $name;
@@ -76,6 +76,7 @@ function showReport($tab) {
 	echo "<div id='details_" . $tab['id'] . "' style='float:right; width:70%'>";
 	echo "<div id='details_header_" . $tab['id'] . "'>";
 	echo '<span>';
+	detailsLink($tab, 'stack_trace', 'Overview', True, 'overview');
 	detailsLink($tab, 'stack_trace', 'Stack Trace', True);
 	detailsLink($tab, 'custom_data', 'Custom Data', True);
 	detailsLink($tab, 'build', 'Build', True);
@@ -95,7 +96,7 @@ function showReport($tab) {
 	detailsLink($tab, 'shared_preferences', 'Shared Preferences', False);
 	echo '</span>';
 	echo "</div>";
-	echo "<div id='details_content_" . $tab['id'] . "'><pre>" . $tab['stack_trace'] . "</pre></div>";
+	echo "<div id='details_content_" . $tab['id'] . "'><pre>" . bicou_stack_trace_overview($tab['stack_trace'], null) . "</pre></div>";
 	echo "</div>";
 	echo "</div>\n";
 }

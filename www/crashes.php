@@ -43,19 +43,29 @@ function array_find($needle, $haystack) {
 
 function bicou_short_stack_trace($stack_trace, $package) {
 	$lines = explode("\n", $stack_trace);
-       //$idx = array_find('Caused by:', $lines);
-       //$v = $lines[$idx];
-       if (array_find(": ", $lines) === FALSE && array_find($package, $lines) === FALSE) {
-	   $value = $lines[0];
-       } else {
-	   $value = "";
-	   foreach ($lines as $id => $line) {
-	       if (strpos($line, ": ") !== FALSE || strpos($line, $package) !== FALSE
+	if (array_find(": ", $lines) === FALSE && array_find($package, $lines) === FALSE) {
+		$value = $lines[0];
+	} else {
+		$value = "";
+		foreach ($lines as $id => $line) {
+		if (strpos($line, ": ") !== FALSE || strpos($line, $package) !== FALSE
 			 || strpos($line, "Error") !== FALSE || strpos($line, "Exception") !== FALSE) {
-		  $value .= $line . "<br />";
-	       }
-	   }
-       }
+				$value .= $line . "<br />";
+			}
+		}
+	}
+	return $value;
+}
+
+function bicou_stack_trace_overview($stack_trace, $package) {
+	$st = bicou_short_stack_trace($stack_trace, $package);
+	$value = "";
+	$lines = explode("\n", $st);
+	foreach ($lines as $id => $line) {
+		if (strpos($line, "Error") !== FALSE || strpos($line, "Exception") !== FALSE) {
+			$value .= $line . "<br />";
+		}
+	}
 	return $value;
 }
 
@@ -320,16 +330,12 @@ function display_crashes($status) {
 		$order[] = "version_code DESC";
 	}
 	$order[] = "last_seen DESC";
-//dbug(__FILE__, __LINE__);
 
 	$tables = "crashes";
 
 	$sql = bicou_mysql_select($columns, $tables, $sel, $selA, implode(", ", $order), "issue_id", "$start, 50");
-//	echo "<p>$sql</p>";
-//dbug(__FILE__, __LINE__);
 	$res = mysql_query($sql);
 
-//dbug(__FILE__, __LINE__);
 	if (!$res) {
 		bicou_log("Unable to query: $sql");
 		echo "<p>Server error: ".mysql_error()."</p>\n";
@@ -347,7 +353,6 @@ function display_crashes($status) {
 	$first = 1;
 	echo "<table class=\"crashes\">\n";
 	while ($tab = mysql_fetch_assoc($res)) {
-//dbug(__FILE__, __LINE__);
 		if ($first == 1) {
 			echo "<thead>\n<tr><th>&nbsp;</th>\n";
 			foreach ($tab as $k => $v) {
@@ -372,19 +377,8 @@ function display_crashes($status) {
 				if (array_find(": ", $lines) === FALSE && array_find($_GET[package], $lines) === FALSE) {
 					$value = $lines[0];
 				} else {
-					$st = bicou_short_stack_trace($v, $_GET[package]);
-					$value = "";
-					foreach ($lines as $id => $line) {
-						if (//strpos($line, $_GET[package]) !== FALSE ||
-							strpos($line, "Error") !== FALSE || strpos($line, "Exception") !== FALSE) {
-							$value .= $line . "<br />";
-						}
-					}
+					$value = bicou_stack_trace_overview($v, $_GET[package]);
 				}
-
-//				if ($tab['issue_id'] == "") {
-//					mysql_query(bicou_mysql_update(array('issue_id' => md5($value)), "id = ?", array($tab['id'])));
-//				}
 			} else if ($k == "last_seen") {
 				$value = date("d/M/Y G:i:s", $v);
 			} else if ($k == "status") {
