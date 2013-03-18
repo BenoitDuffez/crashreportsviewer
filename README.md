@@ -2,7 +2,7 @@ Android crash reports viewer
 ============================
 Foreword: I am new to GitHub. Please advise if there's something wrong.
 
-This project is an ACRA PHP Frontend. ACRA is the Application Crash Reporting tool for Android. Check <http://code.google.com/p/acra/>
+This project is an ACRA PHP Frontend. ACRA is the Application Crash Reporting tool for Android. Check <https://github.com/ACRA/acra>
 
 Setup
 =====
