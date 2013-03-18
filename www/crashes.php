@@ -219,7 +219,7 @@ function display_versions_table() {
 		if ($_GET[v] == $versions[$id]) {
 			echo " background: rgb(50,200,50);";
 		}
-		echo "\"><a href=\"?v=".$versions[$id]."\">$nb</a></td>\n";
+		echo "\"><a href=\"".APP_PACKAGE_URI."/reports/".$versions[$id]."/\">$nb</a></td>\n";
 	}
 
 	echo "</tbody>\n</table>\n";
