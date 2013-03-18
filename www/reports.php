@@ -19,11 +19,13 @@ if (!isset($_GET[status])) {
 
 //dbug(__FILE__, __LINE__);
 display_versions();
+
+display_crashes_vs_date_per_version($_GET[package]);
+
 //dbug(__FILE__, __LINE__);
 display_crashes($status);
 //dbug(__FILE__, __LINE__);
 mysql_close();
 //dbug(__FILE__, __LINE__);
 
-?></body>
-</html>
+?>

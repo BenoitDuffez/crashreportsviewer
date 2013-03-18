@@ -41,7 +41,16 @@ function bicou_mysql_select($columns = NULL, $table = NULL, $selection = NULL, $
 		$sel = str_replace(array("%", "?"), array("%%", "%s"), $selection);
 		$selA = array();
 		foreach($selectionArgs as $s) {
-			$selA[] = mysql_real_escape_string($s);
+			if (gettype($s) == "integer") {
+				$selA[] = "$s";
+			} else if (gettype($s) == "double") {
+				$selA[] = sprintf("%.5f", 0+$s);
+			} else if (gettype($s) == "string") {
+				$selA[] = "'". mysql_real_escape_string($s) ."'";
+			} else {
+				bicou_log("Unhandled SQL type: ".gettype($s)." with value '$s'");
+				$selA[] = mysql_real_escape_string($s);
+			}
 		}
 		$condition = vsprintf($sel, $selA);
 	}

@@ -22,7 +22,7 @@ function summaryLine($name, $value) {
 function detailsLink($tab, $field, $name, $end, $field_alias = null) {
 	if($tab[$field] != "") {
 		echo '<a href="javascript:void(0);" onclick="setDetailsContent(';
-		echo  $tab['id'];
+		echo  $tab[id];
 		echo ", '";
 		echo $field_alias != null ? $field_alias : $field;
 		echo "'";
@@ -36,14 +36,14 @@ function detailsLink($tab, $field, $name, $end, $field_alias = null) {
 }
 
 function showReport($tab) {
-	echo '<div id="report_' . $tab['id'] . '" class="report">'."\n";
-	echo "<h1>Report #".$tab['id']."</h1>\n";
-	echo '<div id="summary_' . $tab['id'] . '" class="summary">';
+	echo '<div id="report_' . $tab[id] . '" class="report">'."\n";
+	echo "<h1>Report #".$tab[id]."</h1>\n";
+	echo '<div id="summary_' . $tab[id] . '" class="summary">';
 	echo '<table>';
-	summaryLine("Report #", $tab['id']);
+	summaryLine("Report #", $tab[id]);
 	$added = '';
-	if (intval($tab['added_date']) > 0) {
-		$added = date('d/M/Y G:i:s', intval($tab['added_date']));
+	if (intval($tab[added_date]) > 0) {
+		$added = date('d/M/Y G:i:s', intval($tab[added_date]));
 	} else {
 		$added = "Date unknown";
 	}
@@ -109,7 +109,7 @@ echo '<a class="button" href="javascript:setStatusAndGo(\''.$_GET['issue_id'].'\
 echo "</div>\n";
 
 // Display reports
-$sql = bicou_mysql_select(null, "crashes", "issue_id = '?'", array($_GET[issue_id]));
+$sql = bicou_mysql_select(null, "crashes", "issue_id = ?", array($_GET[issue_id]));
 $sql .= " LIMIT 0, ".MAX_REPORTS;
 $res = mysql_query($sql);
 

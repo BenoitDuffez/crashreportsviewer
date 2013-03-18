@@ -21,6 +21,87 @@ function bicou_log($msg) {
 	fclose($file);
 }
 
+function display_crashes_vs_date_per_version($package) {
+	$columns = array();
+	$columns[] = "count(*) as nb_crashes";
+	$columns[] = "0+app_version_code as appcode";
+	$columns[] = "package_name";
+	$columns[] = "date(FROM_UNIXTIME(added_date)) as crashdate";
+
+	$selection = array();
+	$selectionArgs = array();
+	if ($package) {
+		$selection[] = "package_name = ?";
+		$selectionArgs[] = $package;
+	}
+	$selection[] = "added_date > ?";
+	$selectionArgs[] = time() - 30*86400;
+
+	$groupBy = "app_version_code, crashdate";
+
+	$orderBy = "appcode asc, crashdate asc";
+
+	$sql = bicou_mysql_select($columns, "crashes", implode(" AND ", $selection), $selectionArgs, $orderBy, $groupBy);
+	$res = mysql_query($sql);
+
+	echo '<div id="crashes_per_version_vs_date" style="height:300px; width:500px;"></div>'."\n";
+	echo '<script>$(document).ready(function(){';
+
+	$plots = array();
+	$prev = "";
+	while ($tab = mysql_fetch_array($res)) {
+		if ($tab[appcode] != $prev) {
+			$plots[] = "V".$tab[appcode];
+			$prev = $tab[appcode];
+			echo "\n  var V".$tab[appcode]." = [];\n";
+		}
+		echo "  V".$tab[appcode].".push(['".$tab[crashdate]."', ".$tab[nb_crashes]."]);\n";
+	}
+
+	echo "\n  var plot = $.jqplot('crashes_per_version_vs_date', [".implode(",", $plots)."], {\n";
+	$JS = <<<JS
+    title: 'Crashes per version vs. date (last 30 days)',
+    axes:{
+      xaxis:{
+        renderer: $.jqplot.DateAxisRenderer,
+        tickOptions: {formatString:'%b %#d, %y'},
+      },
+      yaxis:{
+        min: 0,
+        tickOptions: {formatString:'%d'}
+      }
+    },
+    legend: {
+      show:true,
+      location: 'w',
+      rendererOptions: { numberColumns: 3 },
+    },
+    highlighter: {
+      show: true,
+      sizeAdjust: 7.5
+    },
+    cursor: {
+      show: false
+    },
+    series: [
+      %SERIES%
+    ]
+  });
+});
+</script>
+JS;
+
+	$series = "";
+	foreach ($plots as $name) {
+		if (strlen($series) > 0) {
+			$series .= ", ";
+		}
+
+		$series .= "{\n        label: '$name'\n      }";
+	}
+	echo str_replace("%SERIES%", $series, $JS);
+} 
+
 function status_name($status) {
 	if (intval($status) == STATE_NEW) {
 		return "new";
@@ -81,8 +162,8 @@ function display_versions() {
 					'app_version_code', 'app_version_name', 'android_version');
 
 	if(!empty($_GET[package])) {
-		$sel = "package_name LIKE '?'";
-		$selA = array(mysql_real_escape_string(str_replace("*", "%", $_GET[package])));
+		$sel = "package_name LIKE ?";
+		$selA = array($_GET[package]);
 	} else {
 		$sel = null;
 		$selA = null;
@@ -290,9 +371,8 @@ function display_crashes($status) {
 
 	// Filter by package
 	if (!empty($_GET[package])) {
-		$sel .= " AND package_name LIKE '?'";
-		$pkg = str_replace("*", "%", $_GET[package]);
-		$selA[] = mysql_real_escape_string($pkg);
+		$sel .= " AND package_name LIKE ?";
+		$selA[] = $_GET[package];
 	}
 
 	// Filter by app version code
