@@ -159,9 +159,8 @@ function bicou_short_stack_trace($stack_trace, $package) {
 }
 
 function bicou_stack_trace_overview($stack_trace, $package) {
-	$st = bicou_short_stack_trace($stack_trace, $package);
 	$value = "";
-	$lines = explode("\n", $st);
+	$lines = explode("\n", $stack_trace);
 	foreach ($lines as $id => $line) {
 		if (strpos($line, "Error") !== FALSE || strpos($line, "Exception") !== FALSE) {
 			$value .= $line . "<br />";
@@ -461,6 +460,7 @@ function display_crashes($status) {
 	$first = 1;
 	echo "<table class=\"crashes\">\n";
 	while ($tab = mysql_fetch_assoc($res)) {
+		// Display table header
 		if ($first == 1) {
 			echo "<thead>\n<tr><th>&nbsp;</th>\n";
 			foreach ($tab as $k => $v) {
@@ -476,17 +476,14 @@ function display_crashes($status) {
 			echo "</tr>\n</thead>\n<tbody>\n";
 		}
 
-		echo '<tr id="id_'.$tab['id'].'"><td><a href="'.APP_PACKAGE_URI.'/issue/'.$tab['issue_id'].'">VIEW</a></td>'."\n";
+		// Display table contents
+		echo "<tr id=\"id_".$tab['id']."\">
+<td><a href=\"".APP_PACKAGE_URI."/issue/".$tab[issue_id]."\">VIEW</a></td>
+";
 		foreach ($tab as $k => $v) {
 			if ($k == "stack_trace") {
-				$lines = explode("\n", $v);
-				//$idx = array_find('Caused by:', $lines);
-				//$v = $lines[$idx];
-				if (array_find(": ", $lines) === FALSE && array_find($_GET[package], $lines) === FALSE) {
-					$value = $lines[0];
-				} else {
-					$value = bicou_stack_trace_overview($v, $_GET[package]);
-				}
+				$errors = "<pre><ul><li>" . str_replace("<br />", "</li><li>", bicou_stack_trace_overview($v, $_GET[package])) . "</li></ul></pre>\n";
+				$value = str_replace("<li></li>", "", $errors);
 			} else if ($k == "last_seen") {
 				$value = date("d/M/Y G:i:s", $v);
 			} else if ($k == "status") {
