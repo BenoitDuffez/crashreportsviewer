@@ -116,6 +116,7 @@ function showReport($tab) {
         echo str_replace("<li></li>", "", "<ul><li>".str_replace("<br />", "</li><li>", bicou_stack_trace_overview($tab[stack_trace], null))."</li></ul>");
 	echo "</pre></div>";
 	echo "</div>\n";
+	echo "</div>\n";
 }
 
 // Show button

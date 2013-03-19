@@ -29,7 +29,7 @@ function show_output() {
 		$root = "/";
 	}
 
-	$patt = array("%ROOT%", "%HTML%", "%PACKAGE_URI%");
+	$patt = array("%ROOT%", "%HTML%", "%APP_PACKAGE_URI%");
 	$repl = array($root, $html, APP_PACKAGE_URI);
 	echo str_replace($patt, $repl, $template);
 }

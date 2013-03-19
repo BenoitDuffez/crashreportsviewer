@@ -13,8 +13,8 @@ function setStatusAndGo(iid, stat, url) {
 function setDetailsContent(report_id, field) {
   $.ajax({
     type: "GET",
-    url: "field.php",
-    data: "id=" + report_id + "&field=" + field,
+    url: "%APP_PACKAGE_URI%/report/"+report_id+"/field/"+field,
+    //data: "id=" + report_id + "&field=" + field,
     success: function(data) {
       $("#details_content_" + report_id).html(data);
     }

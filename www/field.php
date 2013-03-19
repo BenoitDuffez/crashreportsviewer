@@ -17,6 +17,7 @@
  */
 
 include "crashes.php";
+include "mysql.php";
 
 $field = $_GET[field] == 'overview' ? "stack_trace" : $_GET[field];
 
