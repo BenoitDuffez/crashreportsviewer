@@ -548,14 +548,9 @@ function display_crashes_vs_android_versions_pie_chart($issue_id) {
 	$columns = array();
 	$columns[] = "count(*) as nb_crashes";
 	$columns[] = "android_version";
-	// $columns[] = "date(FROM_UNIXTIME(added_date)) as crashdate";
 
 	$selection = array();
 	$selectionArgs = array();
-	// if ($package) {
-		// $selection[] = "package_name = ?";
-		// $selectionArgs[] = $package;
-	// }
 	
 	// Filter by issue ID
 	$selection[] = "issue_id = ?";
@@ -566,8 +561,7 @@ function display_crashes_vs_android_versions_pie_chart($issue_id) {
 	$selectionArgs[] = time() - 30*86400;
 
 	$groupBy = "android_version";
-
-	$orderBy = null;// "appcode asc, crashdate asc";
+	$orderBy = null;
 
 	$sql = bicou_mysql_select($columns, "crashes", implode(" AND ", $selection), $selectionArgs, $orderBy, $groupBy);
 	$res = mysql_query($sql);
@@ -584,7 +578,6 @@ HTML;
 	}
 
 	echo <<<HTML
-  
   var crashes_vs_android_versions = jQuery.jqplot('crashes_vs_android_versions', [data], {
     title: 'Crashes vs. Android Versions',
     seriesDefaults: {
