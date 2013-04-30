@@ -126,6 +126,9 @@ echo '<a class="button" href="javascript:setStatusAndGo(\''.$_GET['issue_id'].'\
 echo '<a class="button" href="javascript:setStatusAndGo(\''.$_GET['issue_id'].'\', \''.STATE_NEW.'\', \'reports.php\');">mark as new</a> ';
 echo "</div>\n";
 
+// Display Android Versions pie chart
+display_crashes_vs_android_versions_pie_chart($_GET[issue_id]);
+
 // Display reports
 $sql = bicou_mysql_select(null, "crashes", "issue_id = ?", array($_GET[issue_id]));
 $sql .= " LIMIT 0, ".MAX_REPORTS;
