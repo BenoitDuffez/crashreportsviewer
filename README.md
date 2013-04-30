@@ -1,8 +1,10 @@
 Android crash reports viewer
 ============================
-Foreword: I am new to GitHub. Please advise if there's something wrong.
-
 This project is an ACRA PHP Frontend. ACRA is the Application Crash Reporting tool for Android. Check <https://github.com/ACRA/acra>
+The aim of it is to have a rather simple setup: PHP and MySQL.
+This should work pretty nicely with any version.
+Any contribution welcome. I have very little time to spend on this project. I do use it for my production apps, so it should be useable as long as you don't want a nice UI ;)
+See screenshots below.
 
 Setup
 =====
@@ -13,13 +15,24 @@ On the server
   * This application has to be installed on a Apache/PHP/*SQL machine configuration.
   * You should create a `config.php` file that indicates where is the SQL server. 
 
-Example `config.php` file:
+Setup instructions:
+
+	$ cd ~
+	$ git clone https://github.com/BenoitDuffez/crashreportsviewer.git
+	$ cd crashreportsviewer
+
+Edit `config.php` file as follows:
 
 	<?php
 	$mysql_server = 'mysql.server.com'; // usually it's simply localhost
 	$mysql_user = 'username';
 	$mysql_password = 'password';
 	$mysql_db = 'db_name'; 
+
+Make Apache (or your webserver) point to `~/crashreportsviewer/www`.
+Open up your web browser to `http(s)://your.server.tld/path/to/www/`, which should indicate a message that the database is not installed. Simply click the link, and go back to `http(s)://your.server.tld/path/to/www/`.
+
+The database is now ready to receive crash reports. Configure your client (and make it crash!) to see if this is working for you.
 
 
 On the client
@@ -35,6 +48,7 @@ ACRA should sent reports to `http://server.tld/path/to/submit.php`. Example anno
 					resToastText = R.string.crash_toast_text)
 	public class MyApplication extends Application {
 	...
+	}
 
 
 Usage
@@ -43,12 +57,17 @@ Usage
 Pages
 -----
 
-  * `index.php` : dashboard of the crashes of your applications
-  * `report.php` : view a single report, identified by its `issue_id`
-  * `reports.php` : view all reports, grouped by `issue_id`
+  * `/` or `/your.android.package/`: dashboard of the crashes of your applications (filtered by Android package name, if mentioned in the URL)
+  * `/reports/`: view a all reports, grouped by `issue_id`
+  * `/issue/<issue_id>/`: view a single report, identified by its `issue_id`
 
   Image: Example of the dashboard  
 ![Dashboard overview](https://raw.github.com/BenoitDuffez/crashreportsviewer/master/dashboard.png)
+
+
+  Image: Example of an issue report
+![Issue report](https://raw.github.com/BenoitDuffez/crashreportsviewer/master/issue.png)
+
 
 Features
 --------
