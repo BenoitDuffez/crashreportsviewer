@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-define('HTACCESS_FILE', $_SERVER[DOCUMENT_ROOT]."/.htaccess");
-define('CONFIG_FILE', $_SERVER[DOCUMENT_ROOT]."/../config.php");
-define('APP_PACKAGE_URI', isset($_GET[package]) ? "/".$_GET[package] : "/");
+define('HTACCESS_FILE', $_SERVER['DOCUMENT_ROOT']."/.htaccess");
+define('CONFIG_FILE', $_SERVER['DOCUMENT_ROOT']."/../config.php");
+define('APP_PACKAGE_URI', isset($_GET['package']) ? "/".$_GET['package'] : "/");
 
 $start = microtime();
 function dbug($file, $line) {
@@ -70,12 +70,12 @@ function display_crashes_vs_date_per_version($package) {
 	$plots = array();
 	$prev = "";
 	while ($tab = mysql_fetch_array($res)) {
-		if ($tab[appcode] != $prev) {
-			$plots[] = "V".$tab[appcode];
-			$prev = $tab[appcode];
-			echo "\n  var V".$tab[appcode]." = [];\n";
+		if ($tab['appcode'] != $prev) {
+			$plots[] = "V".$tab['appcode'];
+			$prev = $tab['appcode'];
+			echo "\n  var V".$tab['appcode']." = [];\n";
 		}
-		echo "  V".$tab[appcode].".push(['".$tab[crashdate]."', ".$tab[nb_crashes]."]);\n";
+		echo "  V".$tab['appcode'].".push(['".$tab['crashdate']."', ".$tab['nb_crashes']."]);\n";
 	}
 
 	echo "\n  var plot = $.jqplot('crashes_per_version_vs_date', [".implode(",", $plots)."], {\n";
@@ -180,9 +180,9 @@ function display_versions_table() {
 					'count(issue_id) as nb_errors',
 					'app_version_code', 'app_version_name', 'android_version');
 
-	if(!empty($_GET[package])) {
+	if(!empty($_GET['package'])) {
 		$sel = "package_name LIKE ?";
-		$selA = array($_GET[package]);
+		$selA = array($_GET['package']);
 	} else {
 		$sel = null;
 		$selA = null;
@@ -215,7 +215,7 @@ function display_versions_table() {
 	echo "</tr>\n</thead>\n<tbody>\n<tr>\n";
 	foreach ($nb_errors as $id => $nb) {
 		echo '<td style="text-align: center; ';
-		if ($_GET[v] == $versions[$id]) {
+		if ($_GET['v'] == $versions[$id]) {
 			echo " background: rgb(50,200,50);";
 		}
 		echo "\"><a href=\"".APP_PACKAGE_URI."/reports/".$versions[$id]."/\">$nb</a></td>\n";
@@ -300,10 +300,12 @@ function display_crashes_vs_date() {
 	$sql = bicou_mysql_select(array('package_name'), "crashes", null, null, 'package_name asc', 'package_name');
 	$res = mysql_query($sql);
 	
-	if (!res || !mysql_num_rows($res)) {
+	if (!res || false===mysql_num_rows($res)) {
 		echo "<p>$sql</p>";
 		echo "<p>Server error: ".mysql_error()."</p>";
 		return;
+	} else if (0==mysql_num_rows($res)) {
+		echo "<p>No data yet</p>";
 	}
 	
 	echo '<div id="crashes_vs_date" style="height:400px;width:600px;"></div>';
@@ -312,17 +314,17 @@ function display_crashes_vs_date() {
 	$seriesNames = array();
 	$data = array();
 	while ($tab = mysql_fetch_assoc($res)) {
-		if (!strlen($tab[package_name])) {
+		if (!strlen($tab['package_name'])) {
 			continue;
 		}
-		$varname = str_replace(".", "", $tab[package_name]);
+		$varname = str_replace(".", "", $tab['package_name']);
 		$series[] = $varname;
-		$seriesNames[] = $tab[package_name];
+		$seriesNames[] = $tab['package_name'];
 		$data[$varname] = array();
 		
-		$crashes = get_nb_crashes_per_package($tab[package_name]);
+		$crashes = get_nb_crashes_per_package($tab['package_name']);
 		foreach ($crashes as $crash_data) {
-			$data[$varname][] = "['".$crash_data[date]."', ".$crash_data[nb_crashes]."]";
+			$data[$varname][] = "['".$crash_data['date']."', ".$crash_data['nb_crashes']."]";
 		}
 		
 		echo "  var $varname=[". implode(", ", $data[$varname]) ."];\n";
@@ -382,7 +384,7 @@ function display_crashes($status) {
 	$columns[] = 'MAX(added_date) as last_seen';
 	$columns[] = 'COUNT(issue_id) as nb_errors';
 	$columns[] = issue_id;
-	if (!$_GET[v]) {
+	if (!$_GET['v']) {
 		$columns[] = 'MAX(app_version_code) as version_code';
 	}
 	$columns[] = 'MAX(app_version_name) as version_name';
@@ -397,15 +399,15 @@ function display_crashes($status) {
 	$selA = array($status);
 
 	// Filter by package
-	if (!empty($_GET[package])) {
+	if (!empty($_GET['package'])) {
 		$sel .= " AND package_name LIKE ?";
-		$selA[] = $_GET[package];
+		$selA[] = $_GET['package'];
 	}
 
 	// Filter by app version code
-	if (!empty($_GET[v])) {
+	if (!empty($_GET['v'])) {
 		$sel .= " AND app_version_code = ?";
-		$selA[] = mysql_real_escape_string($_GET[v]);
+		$selA[] = mysql_real_escape_string($_GET['v']);
 	}
 
 	// Search
@@ -423,17 +425,17 @@ function display_crashes($status) {
 	}
 
 	$order = array();
-	if ($_GET[v]) {
+	if ($_GET['v']) {
 		$order[] = "nb_errors DESC";
 	}
 	
-	if ($_GET[start]) {
-		$start = $_GET[start];
+	if ($_GET['start']) {
+		$start = $_GET['start'];
 	} else {
 		$start = 0;
 	}
 
-	if (!$_GET[v]) {
+	if (!$_GET['v']) {
 		$order[] = "version_code DESC";
 	}
 	$order[] = "last_seen DESC";
@@ -478,23 +480,23 @@ function display_crashes($status) {
 
 		// Display table contents
 		echo "<tr id=\"id_".$tab['id']."\">
-<td><a href=\"".APP_PACKAGE_URI."/issue/".$tab[issue_id]."\">VIEW</a></td>
+<td><a href=\"".APP_PACKAGE_URI."/issue/".$tab['issue_id']."\">VIEW</a></td>
 ";
 		foreach ($tab as $k => $v) {
 			if ($k == "stack_trace") {
-				$errors = "<pre><ul><li>" . str_replace("<br />", "</li><li>", bicou_stack_trace_overview($v, $_GET[package])) . "</li></ul></pre>\n";
+				$errors = "<pre><ul><li>" . str_replace("<br />", "</li><li>", bicou_stack_trace_overview($v, $_GET['package'])) . "</li></ul></pre>\n";
 				$value = str_replace("<li></li>", "", $errors);
 			} else if ($k == "last_seen") {
 				$value = date("d/M/Y G:i:s", $v);
 			} else if ($k == "status") {
 				$value = status_name($tab['status']);
 			} else if ($k == "version_code") {
-				if ($_GET[v]) {
+				if ($_GET['v']) {
 					$value = "N/A";
 				} else {
 					$c = array('app_version_code', 'count(app_version_code) as nb');
 					$sl = "issue_id = '?'";
-					$slA = array($tab[issue_id]);
+					$slA = array($tab['issue_id']);
 					$s = bicou_mysql_select($c, "crashes", $sl, $slA, 'nb DESC', 'app_version_code');
 					$r = mysql_query($s);
 					$js = "$(document).ready(function(){\n"."\tvar data = [\t";
@@ -503,12 +505,12 @@ function display_crashes($status) {
 						if (strlen($value)) {
 							$js .= ", ";
 						}
-						$js .= "['V: ".$t[app_version_code]."', ".$t[nb]."]";
-						$value .= '<b title="'.$t[nb].' occurrences">'.$t[app_version_code]."</b> (".sprintf("%.1f%%", 100.0*$t[nb]/$tab[nb_errors]).")<br />";
+						$js .= "['V: ".$t['app_version_code']."', ".$t[nb]."]";
+						$value .= '<b title="'.$t[nb].' occurrences">'.$t['app_version_code']."</b> (".sprintf("%.1f%%", 100.0*$t[nb]/$tab[nb_errors]).")<br />";
 					}
 
 					$js .= "\t ];\n"
-						."	var plot_".$tab[issue_id]." = jQuery.jqplot ('chartdiv_".$tab[issue_id]."', [data], \n"
+						."	var plot_".$tab['issue_id']." = jQuery.jqplot ('chartdiv_".$tab['issue_id']."', [data], \n"
 						."	      { \n"
 						."		seriesDefaults: {\n"
 						."		      renderer: jQuery.jqplot.PieRenderer, \n"
@@ -520,7 +522,7 @@ function display_crashes($status) {
 						."	);\n"
 						."      });\n";
 
-					$value .= '<div id="chartdiv_'.$tab[issue_id].'" style="height:200px;width:200px; "></div>';
+					$value .= '<div id="chartdiv_'.$tab['issue_id'].'" style="height:200px;width:200px; "></div>';
 					$value .= '<script>'.$js.'</script>';
 				}
 			} else if ($k == "TODO") {
@@ -574,7 +576,7 @@ HTML;
 
 	$plots = array();
 	while ($tab = mysql_fetch_array($res)) {
-		echo "  data.push(['V".$tab[android_version]."', ".$tab[nb_crashes]."]);\n";
+		echo "  data.push(['V".$tab['android_version']."', ".$tab['nb_crashes']."]);\n";
 	}
 
 	echo <<<HTML
