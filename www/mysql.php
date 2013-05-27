@@ -30,26 +30,28 @@ if (!mysql_select_db($mysql_db)) {
 }
 
 function bicou_mysql_insert($object) {
-	$cols = "INSERT INTO crashes (".implode(", ", array_keys($object)).") ";
+	global $table_prefix;
+	$cols = "INSERT INTO {$table_prefix}crashes (".implode(", ", array_keys($object)).") ";
 	$vals = "VALUES ('".implode("', '", $object)."')";
 	return $cols.$vals;
 }
 
 function bicou_mysql_select($columns = NULL, $table = NULL, $selection = NULL, $selectionArgs = NULL, $order = NULL, $group = NULL, $limit = NULL) {
+	global $table_prefix;
 	// Columns
 	if ($columns != NULL) {
 		$cols = implode(", ", $columns);
 	} else {
 		$cols = "*";
 	}
-
+	
 	// Table
 	if ($table != NULL) {
-		$tbl = "FROM ".$table;
+		$tbl = "FROM {$table_prefix}" . $table;
 	} else {
-		$tbl = "FROM crashes";
+		$tbl = "FROM {$table_prefix}crashes";
 	}
-
+	
 	// Selection
 	if ($selection == NULL) {
 		$condition = "1";
@@ -96,6 +98,8 @@ function bicou_mysql_select($columns = NULL, $table = NULL, $selection = NULL, $
 }
 
 function bicou_mysql_update($object, $selection, $selectionArgs) {
+	global $table_prefix;
+	
 	$sel = str_replace("?", "%s", $selection);
 	$selA = array();
 	foreach($selectionArgs as $s) {
@@ -106,7 +110,7 @@ function bicou_mysql_update($object, $selection, $selectionArgs) {
 	$sql = "";
 	foreach ($object as $k => $v) {
 		if ($sql == "") {
-			$sql = "UPDATE crashes SET ";
+			$sql = "UPDATE {$table_prefix}crashes SET ";
 		} else {
 			$sql .= ", ";
 		}
