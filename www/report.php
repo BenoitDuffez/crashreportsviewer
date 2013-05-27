@@ -35,19 +35,16 @@ function summaryLine($name, $value) {
 	echo "</td></tr>\n";
 }
 
-function detailsLink($tab, $field, $name, $end, $field_alias = null) {
+function detailsLink($tab, $field, $name, $field_alias = null) {
 	if($tab[$field] != "") {
-		echo '<a href="javascript:void(0);" onclick="setDetailsContent(';
+		echo '<li class="tab ui-state-default"><a href="javascript:void(0);" onclick="setDetailsContent(';
 		echo  $tab[id];
 		echo ", '";
 		echo $field_alias != null ? $field_alias : $field;
 		echo "'";
 		echo ')">';
 		echo $name;
-		echo '</a>';
-		if($end) {
-			echo " | ";
-		}
+		echo '</a></li>';
 	}
 }
 
@@ -90,27 +87,27 @@ function showReport($tab) {
 	echo '</table>';
 	echo "</div>";
 	echo "<div id='details_" . $tab['id'] . "' style='float:right; width:70%'>";
-	echo "<div id='details_header_" . $tab['id'] . "'>";
-	echo '<span>';
-	detailsLink($tab, 'stack_trace', 'Overview', True, 'overview');
-	detailsLink($tab, 'stack_trace', 'Stack Trace', True);
-	detailsLink($tab, 'custom_data', 'Custom Data', True);
-	detailsLink($tab, 'build', 'Build', True);
-	detailsLink($tab, 'initial_configuration', 'Initial Config', True);
-	detailsLink($tab, 'crash_config', 'Crash Config', True);
-	detailsLink($tab, 'display', 'Display', True);
-	detailsLink($tab, 'user_comment', 'User Comment', True);
-	detailsLink($tab, 'dumpsys_meminfo', 'Dumpsys Meminfo', True);
-	detailsLink($tab, 'dropbox', 'Dropbox', True);
-	detailsLink($tab, 'logcat', 'Logcat', True);
-	detailsLink($tab, 'eventslog', 'Events Log', True);
-	detailsLink($tab, 'radiolog', 'Radio Log', True);
-	detailsLink($tab, 'device_features', 'Device Features', True);
-	detailsLink($tab, 'environment', 'Environment', True);
-	detailsLink($tab, 'settings_system', 'System Settings', True);
-	detailsLink($tab, 'settings_secure', 'Secure Settings', True);
-	detailsLink($tab, 'shared_preferences', 'Shared Preferences', False);
-	echo '</span>';
+	echo '<div class="tab-container ui-tabs" id="details_header_"' . $tab['id'] . "'>";
+	echo '<ul class="nav ui-tabs-nav">';
+	detailsLink($tab, 'stack_trace', 'Overview', 'overview');
+	detailsLink($tab, 'stack_trace', 'Stack Trace');
+	detailsLink($tab, 'custom_data', 'Custom Data');
+	detailsLink($tab, 'build', 'Build');
+	detailsLink($tab, 'initial_configuration', 'Initial Config');
+	detailsLink($tab, 'crash_config', 'Crash Config');
+	detailsLink($tab, 'display', 'Display');
+	detailsLink($tab, 'user_comment', 'User Comment');
+	detailsLink($tab, 'dumpsys_meminfo', 'Dumpsys Meminfo');
+	detailsLink($tab, 'dropbox', 'Dropbox');
+	detailsLink($tab, 'logcat', 'Logcat');
+	detailsLink($tab, 'eventslog', 'Events Log');
+	detailsLink($tab, 'radiolog', 'Radio Log');
+	detailsLink($tab, 'device_features', 'Device Features');
+	detailsLink($tab, 'environment', 'Environment');
+	detailsLink($tab, 'settings_system', 'System Settings');
+	detailsLink($tab, 'settings_secure', 'Secure Settings');
+	detailsLink($tab, 'shared_preferences', 'Shared Preferences');
+	echo '</ul>';
 	echo "</div>";
 	echo "<div id='details_content_" . $tab['id'] . "'><pre>";
         echo str_replace("<li></li>", "", "<ul><li>".str_replace("<br />", "</li><li>", bicou_stack_trace_overview($tab[stack_trace], null))."</li></ul>");

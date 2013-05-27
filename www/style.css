@@ -25,8 +25,8 @@ h1, h2, h3 {
 }
 
 table.crashes {
-	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
-	font-size: 12px;
+	font-family: 'Roboto', "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 10pt;
 	background: #fff;
 	padding: 25px;
 	width: 100%;
@@ -34,9 +34,10 @@ table.crashes {
 	text-align: left;
 }
 table.crashes th {
-	font-size: 14px;
+	font-family: 'Roboto Condensed', sans-serif;
+	font-size: 14pt;
 	font-weight: normal;
-	color: #039;
+	color: #666;
 	padding: 10px 8px;
 	border-bottom: 2px solid #6678b1;
 }
@@ -45,13 +46,59 @@ table.crashes thead th {
 }
 
 table.crashes td {
-	border-bottom: 1px solid #ccc;
+	border-bottom: 2px solid #ccc;
 	color: #669;
 	padding: 6px 8px;
 }
 table.crashes tbody tr:hover td {
 	color: #009;
 }
+
+/************************************************************************************ */
+/** TABS -- copyright  Vincent Mimoun-Prat / https://github.com/marvinlabs */
+.tab-container .nav {
+  *zoom: 1;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid #d8d8d8; }
+  .tab-container .nav:before, .tab-container .nav:after {
+    content: " ";
+    display: table; }
+  .tab-container .nav:after {
+    clear: both; }
+  .tab-container .nav .tab {
+    float: left;
+    padding: 5px 15px 0;
+    font-size: 1.2em;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: #333333;
+    text-transform: uppercase; }
+    .tab-container .nav .tab.first {
+      padding-left: 0; }
+    .tab-container .nav .tab.last {
+      padding-right: 0; }
+    .tab-container .nav .tab a {
+      -webkit-transition: border-color, 0.5s;
+      -moz-transition: border-color, 0.5s;
+      transition: border-color, 0.5s;
+      display: block;
+      padding: 5px 0;
+      margin: 0;
+      border-bottom: 4px solid white;
+      text-decoration: none;
+      color: #333333; }
+      .tab-container .nav .tab a:hover {
+        color: #333333;
+        border-bottom: 4px solid #acacac; }
+    .tab-container .nav .tab.ui-state-active a {
+      border-bottom: 4px solid #d8d8d8; }
+.tab-container .content {
+  padding-top: 2.35765%;
+  padding-bottom: 2.35765%; }
+
 
 a, a:hover, a:visited {
 	text-decoration: none;
