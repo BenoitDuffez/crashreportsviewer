@@ -379,8 +379,6 @@ function display_crashes($status) {
 	global $_GET;
 
 	$columns = array();
-	// $columns[] = 'id';
-	// $columns[] = 'status';
 	$columns[] = 'MAX(added_date) as last_seen';
 	$columns[] = 'COUNT(issue_id) as nb_errors';
 	$columns[] = issue_id;
@@ -391,8 +389,6 @@ function display_crashes($status) {
 	$columns[] = 'package_name';
 	$columns[] = 'phone_model';
 	$columns[] = 'android_version';
-	// $columns[] = 'brand';
-	// $columns[] = 'product';
 	$columns[] = 'stack_trace';
 
 	$sel = "status = ?";
