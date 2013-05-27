@@ -14,7 +14,7 @@ define(DB_CURRENT_VERSION, 2);
 // ----------------------------------------------------------------------------
 
 // Check DB version
-$dbv = @readfile(DB_VERSION_FILE);
+$dbv = @file_get_contents(DB_VERSION_FILE);
 if ($dbv === false) {
         $version = 1;
 } else {
