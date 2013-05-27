@@ -29,6 +29,10 @@ if (!mysql_select_db($mysql_db)) {
 	die("Server down");
 }
 
+include "mysql.upgrade.php";
+
+// ----------------------------------------------------------------------------
+
 function bicou_mysql_insert($object) {
 	global $table_prefix;
 	$cols = "INSERT INTO {$table_prefix}crashes (".implode(", ", array_keys($object)).") ";
