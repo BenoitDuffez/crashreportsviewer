@@ -15,13 +15,13 @@
  */
 
 body {
-  font-family:Arial,sans-serif;
-  font-size: 0.8em;
+  font-family: 'Roboto', sans-serif;
 }
 
 h1, h2, h3 {
-	font-family: Trebuchet MS;
-	color: #039;
+	font-family: 'Roboto Condensed', sans-serif;
+	color: #333;
+	font-size: 32pt;
 }
 
 table.crashes {
