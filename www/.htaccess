@@ -13,7 +13,11 @@ RewriteRule .* - [L]
 
 RewriteEngine on
 RewriteRule ^([^/]+)/report/([0-9]+)/field/([^/]+)/?$      field.php?package=$1&id=$2&field=$3 [QSA]
+RewriteRule ^([^/]+)/issue/ajax\.php?(.*)$                 ajax.php?$1 [QSA]
 RewriteRule ^([^/]+)/issue/([a-z0-9]+)/?$                  report.php?package=$1&issue_id=$2 [QSA]
 RewriteRule ^([^/]+)/([^/]+)/([0-9]+)/?$                   $2.php?package=$1&v=$3 [QSA]
 RewriteRule ^([^/]+)/([^/]+)/?$                            $2.php?package=$1 [QSA]
+
+
+
 
