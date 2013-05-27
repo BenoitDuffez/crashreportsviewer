@@ -567,7 +567,7 @@ function display_crashes_vs_android_versions_pie_chart($issue_id) {
 	$res = mysql_query($sql);
 
 	echo <<<HTML
-<div id="crashes_vs_android_versions" style="height:300px; width:500px;"></div>
+<div id="crashes_vs_android_versions" style="float: left; height:300px; width:500px;"></div>
 <script>$(document).ready(function(){
   var data = [];
 HTML;
@@ -580,6 +580,60 @@ HTML;
 	echo <<<HTML
   var crashes_vs_android_versions = jQuery.jqplot('crashes_vs_android_versions', [data], {
     title: 'Crashes vs. Android Versions',
+    seriesDefaults: {
+      renderer: jQuery.jqplot.PieRenderer,
+        rendererOptions: {
+          dataLabelFormatString: '%.1f%%',
+          showDataLabels: true
+        }
+      },
+      legend: {
+        show:true,
+        location: 'e',
+        rendererOptions: { numberColumns: 3 },
+      }
+    }
+  );
+});</script>
+HTML;
+}
+
+function display_crashes_vs_app_versions_pie_chart($issue_id) {
+	$columns = array();
+	$columns[] = "count(*) as nb_crashes";
+	$columns[] = "app_version_code";
+
+	$selection = array();
+	$selectionArgs = array();
+	
+	// Filter by issue ID
+	$selection[] = "issue_id = ?";
+	$selectionArgs[] = $issue_id;
+	
+	// Filter by last 30 days only
+	$selection[] = "added_date > ?";
+	$selectionArgs[] = time() - 30*86400;
+
+	$groupBy = "app_version_code";
+	$orderBy = null;
+
+	$sql = bicou_mysql_select($columns, "crashes", implode(" AND ", $selection), $selectionArgs, $orderBy, $groupBy);
+	$res = mysql_query($sql);
+
+	echo <<<HTML
+<div id="crashes_vs_app_versions" style="margin-left: 550px; height:300px; width:500px;"></div>
+<script>$(document).ready(function(){
+  var data = [];
+HTML;
+
+	$plots = array();
+	while ($tab = mysql_fetch_array($res)) {
+		echo "  data.push(['V".$tab[app_version_code]."', ".$tab[nb_crashes]."]);\n";
+	}
+
+	echo <<<HTML
+  var crashes_vs_app_versions = jQuery.jqplot('crashes_vs_app_versions', [data], {
+    title: 'Crashes vs. App Versions',
     seriesDefaults: {
       renderer: jQuery.jqplot.PieRenderer,
         rendererOptions: {

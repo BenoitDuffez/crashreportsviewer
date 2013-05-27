@@ -120,14 +120,21 @@ function showReport($tab) {
 }
 
 // Show button
-echo '<div style="float: right; margin-right: 100px;">';
-echo '<a class="button" href="javascript:setStatusAndGo(\''.$_GET['issue_id'].'\', \''.STATE_FIXED.'\', \'reports.php\');">mark as fixed</a> ';
-echo '<a class="button" href="javascript:setStatusAndGo(\''.$_GET['issue_id'].'\', \''.STATE_INVALID.'\', \'reports.php\');">mark as invalid</a> ';
-echo '<a class="button" href="javascript:setStatusAndGo(\''.$_GET['issue_id'].'\', \''.STATE_NEW.'\', \'reports.php\');">mark as new</a> ';
-echo "</div>\n";
+$buttons = <<<HTML
+<div style="float: right; margin-right: 100px;">
+  <a class="button" href="javascript:setStatusAndGo('issue_id', 'STATE_FIXED', '../reports/');">mark as fixed</a>
+  <a class="button" href="javascript:setStatusAndGo('issue_id', 'STATE_INVALID', '../reports/');">mark as invalid</a>
+  <a class="button" href="javascript:setStatusAndGo('issue_id', 'STATE_NEW', '../reports/');">mark as new</a>
+</div>
+<div style="display: block"><p>&nbsp;</p></div>
+HTML;
+echo str_replace(array("STATE_FIXED", "STATE_INVALID", "STATE_NEW", "issue_id"),
+		 array(STATE_FIXED,    STATE_INVALID,   STATE_NEW,  $_GET['issue_id']),
+		 $buttons);
 
 // Display Android Versions pie chart
 display_crashes_vs_android_versions_pie_chart($_GET[issue_id]);
+display_crashes_vs_app_versions_pie_chart($_GET[issue_id]);
 
 // Display reports
 $sql = bicou_mysql_select(null, "crashes", "issue_id = ?", array($_GET[issue_id]));
