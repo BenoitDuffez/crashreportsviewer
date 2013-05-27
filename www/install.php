@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 include "crashes.php";
 include "html.php";
 
@@ -24,32 +23,33 @@ if (file_exists(HTACCESS_FILE) && file_exists(CONFIG_FILE)) {
 	exit;
 }
 
-$host = isset($_POST[host]) ? $_POST[host] : "localhost";
-$username = isset($_POST[username]) ? $_POST[username] : "username";
-$password = isset($_POST[password]) ? $_POST[password] : "password";
-$database = isset($_POST[database]) ? $_POST[database] : "database";
-$table = isset($_POST[table]) ? $_POST[table] : "crashes";
+$host = isset($_POST['host']) ? $_POST['host'] : "localhost";
+$username = isset($_POST['username']) ? $_POST['username'] : "username";
+$password = isset($_POST['password']) ? $_POST['password'] : "password";
+$database = isset($_POST['database']) ? $_POST['database'] : "database";
+$table_prefix = isset($_POST['table_prefix']) ? $_POST['table_prefix'] : "acra_";
+$table = $table_prefix . ( isset($_POST['table']) ? $_POST['table'] : "crashes" );
 
-if (!isset($_POST[submit])) {
+if (!isset($_POST['submit'])) {
 	$show_form = true;
 } else {
 	$show_form = false;
 	
-	$mysql = mysql_connect($_POST[host], $_POST[username], $_POST[password]);
+	$mysql = mysql_connect($_POST['host'], $_POST['username'], $_POST['password']);
 	if (!$mysql) {
 		$show_form = true;
 		echo '<div class="error">Unable to connect to mysql server. Check host, user name and password</div>';
 	} else {
-		echo '<div class="ok">Connected to mysql server, logged in using '.$_POST[username].'</div>';
+		echo '<div class="ok">Connected to mysql server, logged in using '.$_POST['username'].'</div>';
 		
-		if (!mysql_select_db($_POST[database])) {
+		if (!mysql_select_db($_POST['database'])) {
 			$show_form = true;
-			echo '<div class="error">Unable to select database. Check that you have created the database `'.$_POST[database].'`.</div>';
+			echo '<div class="error">Unable to select database. Check that you have created the database `'.$_POST['database'].'`.</div>';
 		} else {
-			echo '<div class="ok">Selected the  database `'.$_POST[database].'`.</div>';
+			echo '<div class="ok">Selected the  database `'.$_POST['database'].'`.</div>';
 			
 			// Write config.php
-			$file = fopen("config.php", "w");
+			$file = fopen($_SERVER['DOCUMENT_ROOT'] . "/../config.php", "w");
 			if (!$file) {
 				echo '<div class="error">Unable to create `config.php`. Check file/folder permissions.</div>';
 			} else {
@@ -59,6 +59,7 @@ if (!isset($_POST[submit])) {
 \$mysql_user = '$username';
 \$mysql_password = '$password';
 \$mysql_db = '$database';
+\$table_prefix = '$table_prefix';
 
 ?>");
 				fclose($file);
@@ -66,7 +67,7 @@ if (!isset($_POST[submit])) {
 
 				// Create table
 				$sql = <<<SQL_CREATE
-CREATE TABLE IF NOT EXISTS `crashes` (
+CREATE TABLE IF NOT EXISTS `{$table_prefix}crashes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `added_date` int(11) NOT NULL,
   `status` int(11) NOT NULL,
@@ -116,11 +117,11 @@ SQL_CREATE;
 					echo '<div class="ok">Created the table</div>';
 				}
 				// .htaccess
-				$file = fopen(".htaccess", "w");
+				$file = fopen( $_SERVER['DOCUMENT_ROOT'] . "/.htaccess", "w");
 				if (!$file) {
 					echo '<div class="error">Unable to create `.htaccess`. Check file/folder permissions.</div>';
 				} else {
-					fprintf($file, $_POST[htaccess]);
+					fwrite($file, $_POST['htaccess']);
 					fclose($file);
 					echo '<div class="ok">Wrote `.htaccess`.</div>';
 				}
@@ -129,12 +130,13 @@ SQL_CREATE;
 	}
 }
 
-if ($show_form) {
+if ($show_form) { 
 ?>
 		<form method="post" action="install.php" class="form">
 			<h1>.htaccess</h1>
 			<p>Create your .htaccess file here (remember to update the path to your passwords file):</p>
-			<div><textarea name="htaccess" cols="100" rows="15">AuthUserFile D:/www/crashreportsviewer/www/crashes.htpasswd
+			<div><textarea name="htaccess" cols="100" rows="15">
+AuthUserFile <?php echo $_SERVER['DOCUMENT_ROOT']; ?>/crashes.htpasswd
 AuthGroupFile /dev/null
 AuthName "Oh hai."
 AuthType Basic
@@ -144,8 +146,14 @@ require valid-user
 &lt;/Limit&gt;
 
 Options +FollowSymlinks
+RewriteCond %{REQUEST_URI} ^/dist.* [NC]
+RewriteRule .* - [L]
+
 RewriteEngine on
-RewriteRule ^([^/]+)/([^\.]+).php       $2.php?package=$1 [QSA]
+RewriteRule ^([^/]+)/report/([0-9]+)/field/([^/]+)/?$      field.php?package=$1&id=$2&field=$3 [QSA]
+RewriteRule ^([^/]+)/issue/([a-z0-9]+)/?$                  report.php?package=$1&issue_id=$2 [QSA]
+RewriteRule ^([^/]+)/([^/]+)/([0-9]+)/?$                   $2.php?package=$1&v=$3 [QSA]
+RewriteRule ^([^/]+)/([^/]+)/?$                            $2.php?package=$1 [QSA]
 </textarea>
 
 			<h1>MySQL server connection</h1>
@@ -157,6 +165,8 @@ RewriteRule ^([^/]+)/([^\.]+).php       $2.php?package=$1 [QSA]
 				<input type="text" name="password" value="<?php echo $password; ?>" /></p>
 			<p>Server database name:<br />
 				<input type="text" name="database" value="<?php echo $database; ?>" /></p>
+			<p>Table prefix:<br />
+				<input type="text" name="table_prefix" value="<?php echo $table_prefix; ?>" /></p>
 			<?php /*<p>Table name:<br />
 				<input type="text" name="table" value="<?php echo $table; ?>" /></p>*/ ?>
 
