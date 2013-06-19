@@ -18,7 +18,7 @@
 
 function show_output() {
 	$html = ob_get_clean();
-	$template = file_get_contents($_SERVER[DOCUMENT_ROOT]."/template.html");
+	$template = file_get_contents(dirname(__FILE__)."/template.html");
 
 	$regex = "#^(.*)/".$_GET[package]."#";
 	if ($_GET[package] && preg_match($regex, $_SERVER[REQUEST_URI], $matches)) {
