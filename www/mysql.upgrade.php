@@ -8,8 +8,8 @@ ADD (`application_log` text NOT NULL DEFAULT '',
 `user_ip` text NOT NULL DEFAULT '')
 SQL;
 
-define(DB_VERSION_FILE, "../db.version");
-define(DB_CURRENT_VERSION, 2);
+define('DB_VERSION_FILE', "../db.version");
+define('DB_CURRENT_VERSION', 2);
 
 // ----------------------------------------------------------------------------
 
