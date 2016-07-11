@@ -14,6 +14,7 @@ On the server
 
   * This application has to be installed on a Apache/PHP/*SQL machine configuration.
   * You should create a `config.php` file that indicates where is the SQL server. 
+  * PHP 7 is required
 
 Setup instructions:
 
